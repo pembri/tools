@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacker Bot V4 - Single File</title>
+    <title>Traffic Bot</title>
     <style>
-        /* SEMUA CSS MASUK SINI */
         :root {
             --bg: #0d1117;
             --panel: #161b22;
             --accent: #5de4c7;
             --text: #c9d1d9;
             --border: #30363d;
+            --danger: #da3633;
+            --success: #238636;
         }
 
         body {
@@ -31,24 +32,32 @@
             width: 100%;
             max-width: 380px;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
-        h1 { font-size: 1.1rem; color: var(--accent); text-align: center; text-transform: uppercase; margin: 0 0 20px 0; }
+        h1 { 
+            font-size: 1.2rem; 
+            color: var(--accent); 
+            text-align: center; 
+            text-transform: uppercase; 
+            margin: 0 0 20px 0;
+            letter-spacing: 2px;
+        }
 
         .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.75rem; color: #8b949e; margin-bottom: 5px; }
+        label { display: block; font-size: 0.7rem; color: #8b949e; margin-bottom: 5px; font-weight: bold; }
 
         input {
             width: 100%;
             background: #000;
             border: 1px solid var(--border);
             color: var(--accent);
-            padding: 10px;
-            border-radius: 4px;
+            padding: 12px;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 0.9rem;
         }
 
         .row { display: flex; gap: 10px; }
@@ -56,59 +65,62 @@
 
         .btn {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: none;
             margin-top: 15px;
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             letter-spacing: 1px;
-            border-radius: 4px;
+            border-radius: 6px;
+            transition: 0.3s;
         }
 
-        .start { background: #238636; color: #fff; }
-        .stop { background: #da3633; color: #fff; }
+        .start { background: var(--success); color: #fff; }
+        .stop { background: var(--danger); color: #fff; }
 
         #statsPanel {
-            display: none; /* Tersembunyi di awal */
-            margin-top: 15px;
-            padding: 10px;
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
             background: #000;
-            border: 1px dashed var(--border);
+            border: 1px solid var(--border);
+            border-radius: 6px;
         }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .stat-item { text-align: center; }
-        .stat-label { font-size: 0.65rem; color: #8b949e; display: block; }
-        .stat-val { font-size: 1.1rem; font-weight: bold; color: #fff; }
+        .stat-label { font-size: 0.6rem; color: #8b949e; display: block; margin-bottom: 5px; }
+        .stat-val { font-size: 1.3rem; font-weight: bold; color: #fff; }
 
         .log-box {
             background: #000;
-            height: 100px;
-            border-radius: 4px;
-            padding: 8px;
+            height: 120px;
+            border-radius: 6px;
+            padding: 10px;
             font-size: 0.65rem;
             color: #4ade80;
             overflow-y: auto;
             border: 1px solid var(--border);
             margin-top: 15px;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
 <div class="terminal-container">
-    <h1>[ COMMAND_CENTER ]</h1>
+    <h1>[ TRAFFIC BOT ]</h1>
 
     <div class="input-group">
         <label>TARGET URL</label>
-        <input type="text" id="targetUrl" placeholder="https://target.com">
+        <input type="text" id="targetUrl" placeholder="https://website-kamu.com">
     </div>
     
     <div class="row input-group">
         <div class="col">
-            <label>INTERVAL (S)</label>
+            <label>INTERVAL (DETIK)</label>
             <input type="number" id="intervalTime" value="3">
         </div>
         <div class="col">
@@ -117,12 +129,12 @@
         </div>
     </div>
 
-    <button class="btn start" id="mainBtn" onclick="toggleBot()">EXECUTE ENGINE</button>
+    <button class="btn start" id="mainBtn" onclick="toggleBot()">Execute Engine</button>
 
     <div id="statsPanel">
         <div class="stats-grid">
             <div class="stat-item">
-                <span class="stat-label">HITS</span>
+                <span class="stat-label">TOTAL HITS</span>
                 <span class="stat-val" id="countDisplay">0</span>
             </div>
             <div class="stat-item">
@@ -132,11 +144,10 @@
         </div>
     </div>
 
-    <div class="log-box" id="logBox">> Awaiting operator command...</div>
+    <div class="log-box" id="logBox">> System ready. Awaiting command...</div>
 </div>
 
 <script>
-    /* SEMUA LOGIKA JAVASCRIPT MASUK SINI */
     let isRunning = false;
     let count = 0;
     let botInterval;
@@ -158,44 +169,42 @@
 
         if (!isRunning) {
             if (!url || !url.startsWith('http')) {
-                alert("Gunakan URL lengkap! (http/https)");
+                alert("Masukkan URL lengkap (http:// atau https://)");
                 return;
             }
             
             isRunning = true;
-            btn.innerText = "TERMINATE ENGINE";
+            btn.innerText = "Terminate Engine";
             btn.className = "btn stop";
             
             stats.style.display = "block";
             statusLabel.innerText = "RUNNING";
-            statusLabel.style.color = "#238636";
+            statusLabel.style.color = "#4ade80";
             
-            addLog("System initialized. Target: " + url);
+            addLog("Engine started. Target: " + url);
 
             botInterval = setInterval(() => {
                 for (let i = 0; i < threads; i++) {
                     const ifr = document.createElement('iframe');
                     ifr.style.display = 'none';
-                    // Tambah cache bust agar request selalu baru
                     ifr.src = url + "?v=" + Math.random();
                     document.body.appendChild(ifr);
-                    // Hapus iframe setelah load agar memori tetap lega
                     setTimeout(() => ifr.remove(), 2500);
                 }
                 count += parseInt(threads);
                 document.getElementById('countDisplay').innerText = count;
-                addLog(`Injected ${threads} hits to node... OK`);
+                addLog(`Injected ${threads} hits... SUCCESS`);
             }, interval);
 
         } else {
             isRunning = false;
-            btn.innerText = "EXECUTE ENGINE";
+            btn.innerText = "Execute Engine";
             btn.className = "btn start";
             
             statusLabel.innerText = "IDLE";
             statusLabel.style.color = "#da3633";
             clearInterval(botInterval);
-            addLog("Sequence terminated by user.");
+            addLog("Engine terminated by operator.");
         }
     }
 </script>
