@@ -3,47 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bot Traffic v2</title>
+    <title>Hacker Traffic Bot</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>🚀 Traffic Bot Pro</h1>
-        <p>Simple Stress Test Tool</p>
-    </div>
+    <h1>[ TRAFFIC_BOT_V3 ]</h1>
 
-    <div style="margin-bottom: 20px;">
+    <div id="inputPanel">
         <label>Target URL</label>
-        <input type="text" id="targetUrl" placeholder="https://example.com">
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <label>Interval (Detik)</label>
-            <input type="number" id="intervalTime" value="3">
-        </div>
-        <div class="col">
-            <label>Threads</label>
-            <input type="number" id="threads" value="1">
-        </div>
-    </div>
-
-    <button class="btn start" id="mainBtn" onclick="toggleBot()">Start Engine</button>
-
-    <div class="stats-container">
-        <div class="stat-card">
-            <label>Total Hits</label>
-            <span class="stat-val" id="countDisplay">0</span>
-        </div>
-        <div class="stat-card">
-            <label>Status</label>
-            <span class="stat-val" id="statusText" style="color:var(--danger)">IDLE</span>
+        <input type="text" id="targetUrl" placeholder="https://target-site.com">
+        
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1">
+                <label>Interval (s)</label>
+                <input type="number" id="intervalTime" value="3">
+            </div>
+            <div style="flex:1">
+                <label>Threads</label>
+                <input type="number" id="threads" value="1">
+            </div>
         </div>
     </div>
 
-    <div class="log-box" id="logBox">> System ready...</div>
+    <button class="btn start" id="mainBtn" onclick="toggleBot()">Execute Engine</button>
+
+    <div id="statsPanel">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label style="margin:0">HITS</label>
+                <span class="stat-val" id="countDisplay">0</span>
+            </div>
+            <div class="stat-card">
+                <label style="margin:0">STATUS</label>
+                <span class="stat-val" id="statusText" style="color:var(--accent)">RUNNING</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal" id="logBox">> System ready. Awaiting command...</div>
 </div>
 
 <script src="script.js"></script>
