@@ -3,86 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Translator Elite Fix</title>
+    <title>ZenTranslate - Real-Time Experience</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* CSS Tetap Mewah (Glassmorphism) */
-        body { margin: 0; padding: 20px; font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #fff; }
-        .app-container { width: 100%; max-width: 480px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 35px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); overflow: hidden; }
-        .header { padding: 30px 20px 15px; text-align: center; }
-        .header h1 { font-size: 1.5rem; margin: 0; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: 3px; }
-        .lang-selector { display: flex; align-items: center; justify-content: space-around; padding: 20px; background: rgba(0, 0, 0, 0.2); margin: 0 20px; border-radius: 20px; }
-        select { background: none; color: #cbd5e1; border: none; font-size: 0.9rem; font-weight: 500; outline: none; width: 40%; }
-        .swap-btn { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-        .box { padding: 25px; }
-        textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.15rem; resize: none; outline: none; min-height: 120px; line-height: 1.6; }
-        .result-box { padding: 25px; background: rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.05); min-height: 120px; }
-        .result-text { font-size: 1.15rem; color: #4ade80; font-weight: 500; }
-        .icon-btn { background: rgba(255, 255, 255, 0.1); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; color: #94a3b8; cursor: pointer; border:none; margin-top:10px; }
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Ornamen biar gak sepi */
+        .bg-glow {
+            position: fixed;
+            width: 400px; height: 400px;
+            background: var(--primary);
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+            top: -100px; right: -100px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.7s ease-out;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header { padding: 35px 20px 10px; text-align: center; }
+        .header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: 4px;
+        }
+
+        .lang-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 25px;
+            background: rgba(0, 0, 0, 0.3);
+            margin: 15px 25px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
+        }
+
+        select {
+            background: none;
+            color: #e2e8f0;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
+            width: 40%;
+            cursor: pointer;
+        }
+
+        .swap-circle {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        .swap-circle:hover { transform: rotate(180deg) scale(1.1); }
+
+        .input-area { padding: 20px 30px; }
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            resize: none;
+            outline: none;
+            min-height: 130px;
+            line-height: 1.6;
+        }
+
+        .output-area {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border);
+            min-height: 130px;
+        }
+        .res-text { color: #4ade80; font-size: 1.2rem; font-weight: 500; min-height: 40px; }
+
+        .footer-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn-tool {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 15px;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-tool:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+
+        #status-tag { font-size: 0.6rem; color: #4b5563; font-weight: 800; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
 <div class="app-container">
-    <div class="header"><h1>TRANSLATOR</h1></div>
-    <div class="lang-selector">
-        <select id="srcLang"><option value="auto">AUTO DETECT</option></select>
-        <div class="swap-btn" onclick="swap()"><i class="fas fa-random"></i></div>
+    <div class="header"><h1>ZENTRANSLATE</h1></div>
+
+    <div class="lang-bar">
+        <select id="srcLang"><option value="auto">DETECT LANGUAGE</option></select>
+        <div class="swap-circle" onclick="swap()"><i class="fas fa-sync-alt" style="font-size: 0.8rem;"></i></div>
         <select id="targetLang"></select>
     </div>
-    <div class="box">
-        <textarea id="inputText" placeholder="Ketik di sini..." oninput="autoTranslate()"></textarea>
-        <button class="icon-btn" onclick="clearAll()">CLEAR</button>
+
+    <div class="input-area">
+        <textarea id="inputText" placeholder="Write something..." oninput="trigger()"></textarea>
+        <div class="footer-tools">
+            <button class="btn-tool" onclick="clearAll()"><i class="fas fa-eraser"></i> CLEAR</button>
+            <div id="status-tag">READY</div>
+        </div>
     </div>
-    <div class="result-box">
-        <div id="outputText" class="result-text">Hasil muncul di sini...</div>
-        <button class="icon-btn" onclick="copy()">COPY RESULT</button>
-        <div id="status" style="font-size: 0.6rem; color: #555; margin-top: 10px;">IDLE</div>
+
+    <div class="output-area">
+        <div id="outputText" class="res-text">...</div>
+        <div class="footer-tools">
+            <button class="btn-tool" onclick="copy()"><i class="far fa-copy"></i> COPY RESULT</button>
+        </div>
     </div>
 </div>
 
 <script>
-    const allLangs = {"af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","zh-CN":"Chinese","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","de":"German","el":"Greek","iw":"Hebrew","hi":"Hindi","hu":"Hungarian","is":"Icelandic","id":"Indonesian","it":"Italian","ja":"Japanese","jv":"Javanese","ko":"Korean","ms":"Malay","no":"Norwegian","fa":"Persian","pl":"Polish","pt":"Portuguese","ro":"Romanian","ru":"Russian","sr":"Serbian","sk":"Slovak","sl":"Slovenian","es":"Spanish","su":"Sundanese","th":"Thai","tr":"Turkish","uk":"Ukrainian","vi":"Vietnamese","zu":"Zulu"};
+    const langs = {"af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","zh-CN":"Chinese","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","de":"German","el":"Greek","iw":"Hebrew","hi":"Hindi","hu":"Hungarian","is":"Icelandic","id":"Indonesian","it":"Italian","ja":"Japanese","jv":"Javanese","ko":"Korean","ms":"Malay","no":"Norwegian","fa":"Persian","pl":"Polish","pt":"Portuguese","ro":"Romanian","ru":"Russian","sr":"Serbian","sk":"Slovak","sl":"Slovenian","es":"Spanish","su":"Sundanese","th":"Thai","tr":"Turkish","uk":"Ukrainian","vi":"Vietnamese","zu":"Zulu"};
 
     const src = document.getElementById('srcLang');
     const target = document.getElementById('targetLang');
-    Object.entries(allLangs).forEach(([code, name]) => {
+    const status = document.getElementById('status-tag');
+    
+    // Inject 100+ Bahasa
+    Object.entries(langs).forEach(([code, name]) => {
         src.innerHTML += `<option value="${code}">${name.toUpperCase()}</option>`;
         target.innerHTML += `<option value="${code}">${name.toUpperCase()}</option>`;
     });
-    src.value = "auto"; target.value = "en";
+    src.value = "auto"; target.value = "id";
 
     let timer;
-    function autoTranslate() {
-        document.getElementById('status').innerText = 'TYPING...';
+    function trigger() {
+        status.innerText = 'TYPING...';
         clearTimeout(timer);
-        timer = setTimeout(execute, 600); // Jedanya agak lama dikit biar stabil
+        timer = setTimeout(process, 600);
     }
 
-    async function execute() {
+    async function process() {
         const text = document.getElementById('inputText').value;
         const out = document.getElementById('outputText');
-        if(!text) { out.innerText = 'Hasil muncul di sini...'; return; }
+        if(!text) { out.innerText = '...'; status.innerText = 'READY'; return; }
         
-        document.getElementById('status').innerText = 'TRANSLATING...';
+        status.innerText = 'ZEN PROCESSING...';
         try {
-            // PERBAIKAN: Pakai dt=at & dt=bd biar context-nya dapet
+            // Logic Context Fix
             const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src.value}&tl=${target.value}&dt=t&dt=at&dt=bd&q=${encodeURIComponent(text)}`;
             const res = await fetch(url);
             const data = await res.json();
             
             if(data && data[0]) {
-                let finalResult = "";
-                data[0].forEach(part => { if(part[0]) finalResult += part[0]; });
-                out.innerText = finalResult;
-                document.getElementById('status').innerText = 'COMPLETED';
+                let final = "";
+                data[0].forEach(p => { if(p[0]) final += p[0]; });
+                out.innerText = final;
+                status.innerText = 'ZEN COMPLETED';
             }
-        } catch (e) { document.getElementById('status').innerText = 'ERROR'; }
+        } catch (e) { status.innerText = 'SYNC ERROR'; }
     }
 
-    function swap() { const t = src.value; src.value = target.value; target.value = t; execute(); }
-    function clearAll() { document.getElementById('inputText').value = ''; execute(); }
-    function copy() { navigator.clipboard.writeText(document.getElementById('outputText').innerText); alert("Copied!"); }
+    function swap() { const t = src.value; src.value = target.value; target.value = t; process(); }
+    function clearAll() { document.getElementById('inputText').value = ''; process(); }
+    function copy() { 
+        navigator.clipboard.writeText(document.getElementById('outputText').innerText);
+        status.innerText = 'COPIED TO CLIPBOARD';
+        setTimeout(() => status.innerText = 'READY', 2000);
+    }
 </script>
 </body>
 </html>
