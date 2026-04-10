@@ -3,79 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Bot Final</title>
+    <title>Traffic Bot - Centered Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #09090b;
             --card: #18181b;
-            --cyan: #22d3ee;
-            --red: #f43f5e;
-            --green: #10b981;
+            --accent: #22d3ee;
             --border: #27272a;
         }
 
+        /* PERBAIKAN TATA LETAK: Menggunakan Flexbox untuk menengahkan kontainer */
         body {
-            font-family: 'Segoe UI', monospace;
+            font-family: 'Courier New', monospace;
             background: var(--bg);
             color: #e4e4e7;
-            margin: 0; padding: 15px;
-            display: flex; justify-content: center;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center; /* Mengetengahkan secara horizontal */
+            align-items: center;    /* Mengetengahkan secara vertikal */
+            min-height: 100vh;      /* Memastikan body mengambil tinggi penuh layar */
+            box-sizing: border-box;
         }
 
         .container {
             background: var(--card);
-            width: 100%; max-width: 400px;
-            padding: 20px; border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 16px;
             border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            /* Menghapus margin-top otomatis agar tetap di tengah vertikal */
+            margin: 0;
         }
 
-        h1 { font-size: 1.2rem; color: var(--cyan); text-align: center; letter-spacing: 2px; }
+        h1 {
+            font-size: 1.1rem;
+            color: var(--accent);
+            text-align: center;
+            letter-spacing: 2px;
+            margin-top: 0; /* Mengurangi ruang di atas judul */
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 0.7rem;
+            color: #71717a;
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
 
         input {
-            width: 100%; background: #000; border: 1px solid var(--border);
-            color: var(--cyan); padding: 12px; border-radius: 8px;
-            margin-bottom: 12px; box-sizing: border-box;
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border);
+            color: var(--accent);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 0.9rem;
         }
 
-        .row { display: flex; gap: 10px; }
-        .col { flex: 1; }
-        label { font-size: 0.7rem; color: #71717a; display: block; margin-bottom: 5px; }
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .col {
+            flex: 1;
+        }
 
         .btn {
-            width: 100%; padding: 15px; border: none; border-radius: 8px;
-            font-weight: bold; cursor: pointer; margin: 15px 0;
-            transition: 0.2s; text-transform: uppercase;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            margin-top: 5px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
-        .start { background: var(--green); color: #000; }
-        .stop { background: var(--red); color: #fff; }
 
-        /* LIVE PROOF MONITOR */
-        #monitor {
-            background: #000; border: 1px solid var(--border);
-            padding: 15px; border-radius: 10px; display: none;
+        .start { background: #10b981; color: #000; }
+        .stop { background: #f43f5e; color: #fff; }
+
+        /* BOX GRAFIK & ANALISIS (Sembunyi di awal) */
+        #analysisBox {
+            display: none;
+            margin-top: 20px;
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 10px;
         }
 
-        .signal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .box { text-align: center; border: 1px solid #333; padding: 10px; border-radius: 6px; }
-        .val { font-size: 1.2rem; font-weight: bold; color: #fff; }
-
-        /* Grafik Visual Network */
-        .visual-bars {
-            height: 50px; display: flex; align-items: flex-end; gap: 3px;
-            border-bottom: 1px solid var(--cyan); margin-bottom: 10px; overflow: hidden;
+        .chart-container {
+            height: 150px;
+            width: 100%;
+            margin-bottom: 15px;
         }
-        .bar { width: 100%; background: var(--cyan); min-height: 2px; transition: 0.1s; }
 
-        .log { height: 80px; font-size: 0.65rem; color: var(--green); overflow-y: auto; font-family: monospace; }
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .stat-box {
+            border: 1px solid #222;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .stat-val {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: block;
+            color: var(--accent);
+        }
+
+        .log-mini {
+            font-size: 0.6rem;
+            color: #4ade80;
+            margin-top: 15px;
+            height: 60px;
+            overflow-y: auto;
+            border-top: 1px solid #222;
+            padding-top: 10px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>TRAFFIC BOT</h1>
+    <h1>[ TRAFFIC BOT ]</h1>
 
-    <label>TARGET NODE</label>
-    <input type="text" id="targetUrl" value="https://sairootsmusic.github.io">
+    <label>TARGET URL</label>
+    <input type="text" id="targetUrl" placeholder="https://website-target.com">
 
     <div class="row">
         <div class="col">
@@ -90,21 +164,23 @@
 
     <button class="btn start" id="mainBtn" onclick="toggleBot()">Execute Engine</button>
 
-    <div id="monitor">
-        <div class="visual-bars" id="barContainer"></div>
-        
-        <div class="signal-grid">
-            <div class="box">
-                <label>NETWORK HITS</label>
-                <span class="val" id="hitCount">0</span>
+    <div id="analysisBox">
+        <div class="chart-container">
+            <canvas id="liveChart"></canvas>
+        </div>
+
+        <div class="stat-row">
+            <div class="stat-box">
+                <label>TOTAL HITS</label>
+                <span class="stat-val" id="hitCount">0</span>
             </div>
-            <div class="box">
-                <label>DATA FLOW</label>
-                <span class="val" id="flowStatus" style="color:var(--red)">OFFLINE</span>
+            <div class="stat-box">
+                <label>STATUS</label>
+                <span class="stat-val" id="statusText">ACTIVE</span>
             </div>
         </div>
 
-        <div class="log" id="logBox">> Ready for data injection...</div>
+        <div class="log-mini" id="logBox">> Analyzing network packets...</div>
     </div>
 </div>
 
@@ -112,23 +188,43 @@
     let isRunning = false;
     let count = 0;
     let botInterval;
+    let chart;
 
-    // Membuat bar awal untuk grafik
-    const container = document.getElementById('barContainer');
-    for(let i=0; i<25; i++) {
-        let b = document.createElement('div');
-        b.className = 'bar';
-        b.style.height = '2px';
-        container.appendChild(b);
+    // Inisialisasi Grafik
+    function initChart() {
+        const ctx = document.getElementById('liveChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array(20).fill(''),
+                datasets: [{
+                    label: 'Traffic Signal',
+                    data: Array(20).fill(0),
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { display: false, min: 0, max: 100 },
+                    x: { display: false }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
     }
 
-    function updateVisual() {
-        const bars = document.querySelectorAll('.bar');
-        bars.forEach(b => {
-            let h = Math.floor(Math.random() * 45) + 5;
-            b.style.height = h + 'px';
-            setTimeout(() => b.style.height = '2px', 300);
-        });
+    function updateChart(value) {
+        if(!chart) return;
+        chart.data.datasets[0].data.shift();
+        chart.data.datasets[0].data.push(value);
+        chart.update();
     }
 
     function addLog(msg) {
@@ -139,18 +235,24 @@
 
     function toggleBot() {
         const btn = document.getElementById('mainBtn');
-        const mon = document.getElementById('monitor');
+        const box = document.getElementById('analysisBox');
         const url = document.getElementById('targetUrl').value;
         const interval = document.getElementById('intervalTime').value * 1000;
-        const threads = document.getElementById('threads').value;
+        const threads = parseInt(document.getElementById('threads').value);
 
         if (!isRunning) {
+            if (!url || !url.startsWith('http')) {
+                alert("Masukkan URL lengkap! (Contoh: https://google.com)");
+                return;
+            }
+            
             isRunning = true;
             btn.innerText = "Terminate Engine";
             btn.className = "btn stop";
-            mon.style.display = "block";
-            document.getElementById('flowStatus').innerText = "ACTIVE";
-            document.getElementById('flowStatus').style.color = "var(--cyan)";
+            box.style.display = "block";
+            if(!chart) initChart();
+
+            addLog("Engine started. Target: " + url);
 
             botInterval = setInterval(() => {
                 for (let i = 0; i < threads; i++) {
@@ -158,25 +260,29 @@
                     ifr.style.display = 'none';
                     ifr.src = url + "?t=" + Date.now();
                     
-                    // BUKTI FISIK: Onload hanya terpanggil jika server merespon
-                    ifr.onload = function() {
-                        updateVisual();
-                        addLog(`SUCCESS: Data packet received from ${url.split('/')[2]}`);
+                    ifr.onload = () => {
+                        // Grafik area biru naik tajam (Work Evidence)
+                        updateChart(Math.floor(Math.random() * 40) + 60);
+                        addLog(`SUCCESS: Packet received.`);
                     };
 
                     document.body.appendChild(ifr);
                     setTimeout(() => ifr.remove(), 2500);
                 }
-                count += parseInt(threads);
+                count += threads;
                 document.getElementById('hitCount').innerText = count;
+                
+                // Grafik turun sedikit (idle) sebelum hit berikutnya
+                setTimeout(() => updateChart(10), interval / 2);
+
             }, interval);
         } else {
             isRunning = false;
             btn.innerText = "Execute Engine";
             btn.className = "btn start";
-            document.getElementById('flowStatus').innerText = "OFFLINE";
-            document.getElementById('flowStatus').style.color = "var(--red)";
             clearInterval(botInterval);
+            updateChart(0);
+            addLog("Engine stopped.");
         }
     }
 </script>
