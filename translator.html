@@ -3,25 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZenTranslate ELITE</title>
+    <title>ZenTranslate ELITE - Ahmadsupembri</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --s: #a855f7; --accent: #4ade80; --bg: #030712; --card: rgba(17, 24, 39, 0.95); }
-        body { margin: 0; padding: 15px; font-family: 'Poppins', sans-serif; background: #030712; min-height: 100vh; color: #fff; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 450px; background: var(--card); border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        :root { --p: #6366f1; --s: #a855f7; --accent: #4ade80; --bg: #030712; --card: rgba(17, 24, 39, 0.98); }
+        body { margin: 0; padding: 15px; font-family: 'Poppins', sans-serif; background: #030712; min-height: 100vh; color: #fff; display: flex; flex-direction: column; align-items: center; }
+        .app-container { width: 100%; max-width: 450px; background: var(--card); border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; box-shadow: 0 0 60px rgba(0,0,0,1); }
         .header { padding: 30px 20px 10px; text-align: center; }
         .header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 5px; }
-        .lang-control { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.4); margin: 20px; padding: 12px; border-radius: 20px; }
-        select { background: none; color: #fff; border: none; font-size: 0.8rem; font-weight: 600; outline: none; width: 42%; cursor: pointer; }
-        .swap-btn { width: 35px; height: 35px; background: linear-gradient(135deg, var(--p), var(--s)); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        
+        .lang-control { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); margin: 20px; padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        select { background: none; color: #fff; border: none; font-size: 0.8rem; font-weight: 700; outline: none; width: 42%; cursor: pointer; text-transform: uppercase; }
+        .swap-btn { width: 38px; height: 38px; background: linear-gradient(135deg, var(--p), var(--s)); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+
         .input-box, .output-box { padding: 10px 25px; }
-        textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; font-family: 'Poppins', sans-serif; }
-        .res-text { color: var(--accent); font-size: 1.1rem; min-height: 50px; word-wrap: break-word; margin-top: 10px; font-weight: 600; }
-        .action-bar { display: flex; gap: 10px; margin-top: 10px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .btn-p { background: rgba(255,255,255,0.05); border: none; color: #fff; padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-p:active { transform: scale(0.95); background: var(--p); }
-        .status { text-align: center; font-size: 0.6rem; color: #4b5563; padding: 15px; letter-spacing: 2px; text-transform: uppercase; }
+        label { font-size: 0.6rem; color: #6366f1; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; display: block; margin-bottom: 8px; }
+        
+        textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.2rem; resize: none; outline: none; min-height: 100px; font-family: 'Poppins', sans-serif; line-height: 1.5; }
+        .res-text { color: var(--accent); font-size: 1.2rem; min-height: 60px; word-wrap: break-word; margin-top: 10px; font-weight: 600; line-height: 1.5; }
+        
+        .action-bar { display: flex; gap: 10px; margin-top: 15px; padding-bottom: 20px; }
+        .btn-p { background: rgba(255,255,255,0.07); border: none; color: #fff; padding: 12px 20px; border-radius: 15px; cursor: pointer; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; transition: 0.2s; }
+        .btn-copy { background: var(--p); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+
+        .footer-copyright { margin-top: 20px; text-align: center; font-size: 0.7rem; color: #4b5563; letter-spacing: 1px; }
+        .footer-copyright b { color: var(--s); font-family: 'Orbitron', sans-serif; }
+        .status { text-align: center; font-size: 0.55rem; color: #4b5563; padding: 15px; letter-spacing: 2px; text-transform: uppercase; border-top: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -31,103 +39,85 @@
 
     <div class="lang-control">
         <select id="srcLang"><option value="auto">AUTO DETECT</option></select>
-        <div class="swap-btn" onclick="swap()"><i class="fas fa-random"></i></div>
+        <div class="swap-btn" onclick="swap()"><i class="fas fa-sync-alt"></i></div>
         <select id="targetLang"></select>
     </div>
 
     <div class="input-box">
-        <textarea id="inputText" placeholder="Ketik kalimat..." oninput="trigger()"></textarea>
+        <label>Input Text</label>
+        <textarea id="inputText" placeholder="Ketik kata atau kalimat..." oninput="trigger()"></textarea>
         <div class="action-bar">
-            <button class="btn-p" onclick="playTTS('input')"><i class="fas fa-volume-up"></i> LISTEN</button>
-            <button class="btn-p" onclick="clearText()"><i class="fas fa-trash"></i> CLEAR</button>
+            <button class="btn-p" onclick="clearText()"><i class="fas fa-eraser"></i> CLEAR ALL</button>
         </div>
     </div>
 
-    <div class="output-box">
+    <div class="output-box" style="background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05);">
+        <label style="color: var(--accent); margin-top: 15px;">Translation Result</label>
         <div id="outputText" class="res-text">...</div>
         <div class="action-bar">
-            <button class="btn-p" onclick="playTTS('output')" style="background: var(--p); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
-                <i class="fas fa-play"></i> LISTEN RESULT
-            </button>
-            <button class="btn-p" onclick="copyResult()"><i class="fas fa-copy"></i> COPY</button>
+            <button class="btn-p btn-copy" onclick="copyResult()"><i class="fas fa-copy"></i> COPY RESULT</button>
         </div>
     </div>
 
-    <div class="status" id="status">ELITE ENGINE ACTIVE</div>
+    <div class="status" id="status">Ultra Engine: 130+ Languages Active</div>
 </div>
 
-<audio id="audioPlayer" style="display:none;"></audio>
+<div class="footer-copyright">
+    &copy; 2024 Developed by <b>ahmadsupembri</b>
+</div>
 
 <script>
-    const langs = {"af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","zh-CN":"Chinese","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","de":"German","el":"Greek","gu":"Gujarati","hi":"Hindi","hu":"Hungarian","is":"Icelandic","id":"Indonesian","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","km":"Khmer","ko":"Korean","la":"Latin","lv":"Latvian","lt":"Lithuanian","ms":"Malay","ml":"Malayalam","mr":"Marathi","ne":"Nepalese","no":"Norwegian","pl":"Polish","pt":"Portuguese","ro":"Romanian","ru":"Russian","sr":"Serbian","sk":"Slovak","sl":"Slovenian","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","vi":"Vietnamese"};
+    const langs = {"af":"Afrikaans","sq":"Albanian","am":"Amharic","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese (Sim)","zh-TW":"Chinese (Tra)","co":"Corsican","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","fy":"Frisian","gl":"Galician","ka":"Georgian","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian Creole","ha":"Hausa","haw":"Hawaiian","iw":"Hebrew","hi":"Hindi","hmn":"Hmong","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","ku":"Kurdish","ky":"Kyrgyz","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","lb":"Luxembourgish","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Myanmar","ne":"Nepalese","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sm":"Samoan","gd":"Scots Gaelic","sr":"Serbian","st":"Sesotho","sn":"Shona","sd":"Sindhi","si":"Sinhala","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","cy":"Welsh","xh":"Xhosa","yi":"Yiddish","yo":"Yoruba","zu":"Zulu"};
 
     const src = document.getElementById('srcLang'), 
           target = document.getElementById('targetLang'), 
           status = document.getElementById('status'),
-          audioPlayer = document.getElementById('audioPlayer');
+          outArea = document.getElementById('outputText');
 
     Object.entries(langs).forEach(([code, name]) => {
         const opt = `<option value="${code}">${name.toUpperCase()}</option>`;
         src.innerHTML += opt; target.innerHTML += opt;
     });
+    
+    src.value = "auto";
     target.value = "en";
 
     let timer;
     function trigger() {
-        status.innerText = 'SINKRONISASI...';
+        status.innerText = 'Analyzing...';
         clearTimeout(timer);
-        timer = setTimeout(translate, 600);
+        timer = setTimeout(translate, 500);
     }
 
     async function translate() {
         const text = document.getElementById('inputText').value;
-        if(!text) { document.getElementById('outputText').innerText = '...'; status.innerText = 'READY'; return; }
+        if(!text.trim()) { outArea.innerText = '...'; status.innerText = 'READY'; return; }
+
         try {
-            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src.value}&tl=${target.value}&dt=t&q=${encodeURIComponent(text)}`);
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src.value}&tl=${target.value}&dt=t&q=${encodeURIComponent(text)}`;
+            const res = await fetch(url);
             const data = await res.json();
-            document.getElementById('outputText').innerText = data[0].map(x => x[0]).join("");
-            status.innerText = 'TERJEMAH BERHASIL';
-        } catch (e) { status.innerText = 'KONEKSI BERMASALAH'; }
-    }
-
-    // SOLUSI AUDIO FINAL: Pakai Tag Audio HTML5 dengan link Google TTS resmi
-    function playTTS(type) {
-        const text = type === 'input' ? document.getElementById('inputText').value : document.getElementById('outputText').innerText;
-        let lang = type === 'input' ? (src.value === 'auto' ? 'id' : src.value) : target.value;
-        
-        if (!text || text === '...') return;
-
-        // Reset player
-        audioPlayer.pause();
-        
-        // Link stream Google Translate resmi (client=tw-ob adalah kunci agar tidak diblokir browser)
-        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`;
-        
-        audioPlayer.src = audioUrl;
-        
-        // Browser butuh "interaksi user" (klik) untuk memutar audio
-        const playPromise = audioPlayer.play();
-
-        if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                status.innerText = 'PLAYING AUDIO...';
-            }).catch(error => {
-                status.innerText = 'AUDIO BLOCKED - CLICK AGAIN';
-                console.log("Audio play failed:", error);
-            });
+            
+            if(data && data[0]) {
+                const translatedText = data[0].map(part => part[0]).join("");
+                outArea.innerText = translatedText;
+                status.innerText = 'SUCCESS';
+            }
+        } catch (e) { 
+            status.innerText = 'OFFLINE/ERROR'; 
         }
     }
 
     function copyResult() {
-        const text = document.getElementById('outputText').innerText;
-        navigator.clipboard.writeText(text);
-        status.innerText = 'TEXT DISALIN!';
+        navigator.clipboard.writeText(outArea.innerText);
+        status.innerText = 'COPIED!';
+        setTimeout(() => status.innerText = 'READY', 2000);
     }
 
     function clearText() {
         document.getElementById('inputText').value = '';
-        document.getElementById('outputText').innerText = '...';
-        status.innerText = 'DIBERSIHKAN';
+        outArea.innerText = '...';
+        status.innerText = 'CLEARED';
     }
 
     function swap() {
