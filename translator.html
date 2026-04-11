@@ -9,19 +9,19 @@
     <style>
         :root { --p: #6366f1; --s: #a855f7; --accent: #4ade80; --bg: #030712; --card: rgba(17, 24, 39, 0.95); }
         body { margin: 0; padding: 15px; font-family: 'Poppins', sans-serif; background: #030712; min-height: 100vh; color: #fff; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 450px; background: var(--card); border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+        .app-container { width: 100%; max-width: 450px; background: var(--card); border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
         .header { padding: 30px 20px 10px; text-align: center; }
         .header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 5px; }
         .lang-control { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.4); margin: 20px; padding: 12px; border-radius: 20px; }
-        select { background: none; color: #fff; border: none; font-size: 0.8rem; font-weight: 600; outline: none; width: 42%; }
+        select { background: none; color: #fff; border: none; font-size: 0.8rem; font-weight: 600; outline: none; width: 42%; cursor: pointer; }
         .swap-btn { width: 35px; height: 35px; background: linear-gradient(135deg, var(--p), var(--s)); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
         .input-box, .output-box { padding: 10px 25px; }
-        textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; }
-        .res-text { color: var(--accent); font-size: 1.1rem; min-height: 50px; word-wrap: break-word; margin-top: 10px; }
+        textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; font-family: 'Poppins', sans-serif; }
+        .res-text { color: var(--accent); font-size: 1.1rem; min-height: 50px; word-wrap: break-word; margin-top: 10px; font-weight: 600; }
         .action-bar { display: flex; gap: 10px; margin-top: 10px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .btn-p { background: rgba(255,255,255,0.05); border: none; color: #fff; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        .btn-p:active { background: var(--p); }
-        .status { text-align: center; font-size: 0.6rem; color: #4b5563; padding: 15px; letter-spacing: 2px; }
+        .btn-p { background: rgba(255,255,255,0.05); border: none; color: #fff; padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-p:active { transform: scale(0.95); background: var(--p); }
+        .status { text-align: center; font-size: 0.6rem; color: #4b5563; padding: 15px; letter-spacing: 2px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -36,9 +36,9 @@
     </div>
 
     <div class="input-box">
-        <textarea id="inputText" placeholder="Ketik di sini..." oninput="trigger()"></textarea>
+        <textarea id="inputText" placeholder="Ketik kalimat..." oninput="trigger()"></textarea>
         <div class="action-bar">
-            <button class="btn-p" onclick="playAudio('input')"><i class="fas fa-volume-up"></i> LISTEN</button>
+            <button class="btn-p" onclick="playTTS('input')"><i class="fas fa-volume-up"></i> LISTEN</button>
             <button class="btn-p" onclick="clearText()"><i class="fas fa-trash"></i> CLEAR</button>
         </div>
     </div>
@@ -46,18 +46,25 @@
     <div class="output-box">
         <div id="outputText" class="res-text">...</div>
         <div class="action-bar">
-            <button class="btn-p" onclick="playAudio('output')" style="background: var(--p);"><i class="fas fa-play"></i> LISTEN RESULT</button>
+            <button class="btn-p" onclick="playTTS('output')" style="background: var(--p); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
+                <i class="fas fa-play"></i> LISTEN RESULT
+            </button>
             <button class="btn-p" onclick="copyResult()"><i class="fas fa-copy"></i> COPY</button>
         </div>
     </div>
 
-    <div class="status" id="status">ELITE SYSTEM ACTIVE</div>
+    <div class="status" id="status">ELITE ENGINE ACTIVE</div>
 </div>
+
+<audio id="audioPlayer" style="display:none;"></audio>
 
 <script>
     const langs = {"af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","zh-CN":"Chinese","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","de":"German","el":"Greek","gu":"Gujarati","hi":"Hindi","hu":"Hungarian","is":"Icelandic","id":"Indonesian","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","km":"Khmer","ko":"Korean","la":"Latin","lv":"Latvian","lt":"Lithuanian","ms":"Malay","ml":"Malayalam","mr":"Marathi","ne":"Nepalese","no":"Norwegian","pl":"Polish","pt":"Portuguese","ro":"Romanian","ru":"Russian","sr":"Serbian","sk":"Slovak","sl":"Slovenian","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","vi":"Vietnamese"};
 
-    const src = document.getElementById('srcLang'), target = document.getElementById('targetLang'), status = document.getElementById('status');
+    const src = document.getElementById('srcLang'), 
+          target = document.getElementById('targetLang'), 
+          status = document.getElementById('status'),
+          audioPlayer = document.getElementById('audioPlayer');
 
     Object.entries(langs).forEach(([code, name]) => {
         const opt = `<option value="${code}">${name.toUpperCase()}</option>`;
@@ -83,25 +90,37 @@
         } catch (e) { status.innerText = 'KONEKSI BERMASALAH'; }
     }
 
-    // FUNGSI LISTEN TERKUAT (Google TTS Engine)
-    function playAudio(type) {
+    // SOLUSI AUDIO FINAL: Pakai Tag Audio HTML5 dengan link Google TTS resmi
+    function playTTS(type) {
         const text = type === 'input' ? document.getElementById('inputText').value : document.getElementById('outputText').innerText;
-        const lang = type === 'input' ? (src.value === 'auto' ? 'id' : src.value) : target.value;
+        let lang = type === 'input' ? (src.value === 'auto' ? 'id' : src.value) : target.value;
         
         if (!text || text === '...') return;
 
-        // Pake API Google TTS eksternal biar pasti bunyi
-        const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`);
-        audio.play().catch(e => {
-            // Backup kalo API block, balik ke sistem browser
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = lang;
-            window.speechSynthesis.speak(u);
-        });
+        // Reset player
+        audioPlayer.pause();
+        
+        // Link stream Google Translate resmi (client=tw-ob adalah kunci agar tidak diblokir browser)
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`;
+        
+        audioPlayer.src = audioUrl;
+        
+        // Browser butuh "interaksi user" (klik) untuk memutar audio
+        const playPromise = audioPlayer.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                status.innerText = 'PLAYING AUDIO...';
+            }).catch(error => {
+                status.innerText = 'AUDIO BLOCKED - CLICK AGAIN';
+                console.log("Audio play failed:", error);
+            });
+        }
     }
 
     function copyResult() {
-        navigator.clipboard.writeText(document.getElementById('outputText').innerText);
+        const text = document.getElementById('outputText').innerText;
+        navigator.clipboard.writeText(text);
         status.innerText = 'TEXT DISALIN!';
     }
 
