@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --neon-p: #ff007f; --neon-b: #00f2ff; --bg: #050505; --card: rgba(15, 15, 20, 0.98); }
-        body { margin: 0; background: var(--bg); font-family: 'Rajdhani', sans-serif; color: #fff; display: flex; justify-content: center; min-height: 100vh; padding: 10px; box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); font-family: 'Rajdhani', sans-serif; color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 10px; box-sizing: border-box; }
         .app-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid rgba(0,242,255,0.2); border-radius: 30px; padding: 25px; backdrop-filter: blur(20px); box-shadow: 0 0 50px #000; margin-top: 10px; }
         .header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; text-align: center; letter-spacing: 4px; background: linear-gradient(90deg, var(--neon-b), var(--neon-p)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 25px; }
         .box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
@@ -20,6 +20,10 @@
         #rate-text { text-align: center; color: var(--neon-p); font-weight: 700; font-size: 1rem; margin-top: 15px; }
         .status { text-align: center; font-size: 0.5rem; color: #444; margin-top: 10px; letter-spacing: 1px; }
         #result { color: var(--neon-b); }
+        
+        /* Tambahan Style Copyright */
+        .footer-copyright { margin-top: 20px; text-align: center; font-size: 0.7rem; color: #4b5563; letter-spacing: 1px; }
+        .footer-copyright b { color: var(--neon-p); font-family: 'Orbitron', sans-serif; }
     </style>
 </head>
 <body>
@@ -44,10 +48,13 @@
     <div class="status">ULTRALIGHT DATABASE ENGINE ACTIVE</div>
 </div>
 
+<div class="footer-copyright">
+    &copy; 2026 Developed by <b>ahmadsupembri</b>
+</div>
+
 <script>
     let currencyCodes = [];
 
-    // Fungsi fetch database lengkap (1000+ pair didukung oleh API)
     async function initApp() {
         try {
             const res = await fetch('https://open.er-api.com/v6/latest/USD');
@@ -65,25 +72,18 @@
     }
 
     function handleInput(el) {
-        // Biarkan pengguna mengetik koma, tapi hapus karakter ilegal lainnya
         let val = el.value.replace(/[^0-9,]/g, "");
-        
-        // Pastikan hanya ada satu koma
         const parts = val.split(",");
         if (parts.length > 2) val = parts[0] + "," + parts.slice(1).join("");
-        
-        // Format bagian ribuan dengan titik
         let integerPart = parts[0].replace(/\D/g, "");
         if (integerPart !== "") {
             integerPart = parseInt(integerPart).toLocaleString('id-ID');
         }
-        
         el.value = parts.length > 1 ? integerPart + "," + parts[1] : integerPart;
         convert();
     }
 
     async function convert() {
-        // Ubah format tampilan (titik & koma) kembali ke angka standar komputer
         let rawVal = document.getElementById('amount').value.replace(/\./g, "").replace(",", ".");
         if (!rawVal || isNaN(rawVal)) return;
 
@@ -96,7 +96,6 @@
             const rate = d.rates[t];
             const final = (parseFloat(rawVal) * rate);
             
-            // Tampilkan hasil dengan format Indonesia (Titik ribuan, Koma desimal)
             document.getElementById('result').value = final.toLocaleString('id-ID', { maximumFractionDigits: 2 });
             document.getElementById('rate-text').innerText = `1 ${f} = ${rate.toLocaleString('id-ID')} ${t}`;
         } catch (e) {}
