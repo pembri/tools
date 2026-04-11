@@ -7,76 +7,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --p: #6366f1; --s: #a855f7; --accent: #4ade80;
-            --bg: #030712; --card: rgba(17, 24, 39, 0.85);
-        }
-
-        body {
-            margin: 0; padding: 15px; font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b, #030712);
-            min-height: 100vh; color: #fff; display: flex; justify-content: center;
-        }
-
-        .app-container {
-            width: 100%; max-width: 450px; background: var(--card);
-            backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 35px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            overflow: hidden; animation: fadeIn 0.8s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
+        :root { --p: #6366f1; --s: #a855f7; --accent: #4ade80; --bg: #030712; --card: rgba(17, 24, 39, 0.95); }
+        body { margin: 0; padding: 15px; font-family: 'Poppins', sans-serif; background: #030712; min-height: 100vh; color: #fff; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 450px; background: var(--card); border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
         .header { padding: 30px 20px 10px; text-align: center; }
-        .header h1 {
-            font-family: 'Orbitron', sans-serif; font-size: 1.4rem; margin: 0;
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 5px;
-        }
-
-        .lang-control {
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(0,0,0,0.4); margin: 20px; padding: 12px 20px;
-            border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        select {
-            background: none; color: #fff; border: none; font-size: 0.8rem;
-            font-weight: 600; outline: none; width: 40%; cursor: pointer;
-        }
-
-        .swap-btn {
-            width: 35px; height: 35px; background: linear-gradient(135deg, var(--p), var(--s));
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.3s;
-        }
-
-        .input-box, .output-box { padding: 20px 25px; position: relative; }
-        
-        textarea {
-            width: 100%; background: transparent; border: none; color: #fff;
-            font-size: 1.1rem; resize: none; outline: none; min-height: 100px; line-height: 1.5;
-        }
-
-        .res-text { color: var(--accent); font-size: 1.1rem; min-height: 50px; line-height: 1.6; word-wrap: break-word; }
-
-        .action-bar {
-            display: flex; gap: 15px; margin-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;
-        }
-
-        .btn-premium {
-            background: rgba(255,255,255,0.05); border: none; color: #94a3b8;
-            padding: 10px 15px; border-radius: 12px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 600;
-        }
-        .btn-premium:hover { background: rgba(255,255,255,0.15); color: #fff; }
-
-        .status-badge {
-            text-align: center; font-size: 0.6rem; color: #4b5563;
-            letter-spacing: 2px; padding-bottom: 20px; text-transform: uppercase;
-        }
+        .header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 5px; }
+        .lang-control { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.4); margin: 20px; padding: 12px; border-radius: 20px; }
+        select { background: none; color: #fff; border: none; font-size: 0.8rem; font-weight: 600; outline: none; width: 42%; }
+        .swap-btn { width: 35px; height: 35px; background: linear-gradient(135deg, var(--p), var(--s)); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .input-box, .output-box { padding: 10px 25px; }
+        textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; }
+        .res-text { color: var(--accent); font-size: 1.1rem; min-height: 50px; word-wrap: break-word; margin-top: 10px; }
+        .action-bar { display: flex; gap: 10px; margin-top: 10px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .btn-p { background: rgba(255,255,255,0.05); border: none; color: #fff; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .btn-p:active { background: var(--p); }
+        .status { text-align: center; font-size: 0.6rem; color: #4b5563; padding: 15px; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -91,39 +36,28 @@
     </div>
 
     <div class="input-box">
-        <textarea id="inputText" placeholder="Ketik sesuatu di sini..." oninput="trigger()"></textarea>
+        <textarea id="inputText" placeholder="Ketik di sini..." oninput="trigger()"></textarea>
         <div class="action-bar">
-            <button class="btn-premium" onclick="speakInput()">
-                <i class="fas fa-volume-up"></i> LISTEN INPUT
-            </button>
-            <button class="btn-premium" onclick="clearText()">
-                <i class="fas fa-trash"></i> CLEAR
-            </button>
+            <button class="btn-p" onclick="playAudio('input')"><i class="fas fa-volume-up"></i> LISTEN</button>
+            <button class="btn-p" onclick="clearText()"><i class="fas fa-trash"></i> CLEAR</button>
         </div>
     </div>
 
-    <div class="output-box" style="background: rgba(255,255,255,0.02);">
+    <div class="output-box">
         <div id="outputText" class="res-text">...</div>
         <div class="action-bar">
-            <button class="btn-premium" onclick="speakOutput()" style="color: var(--accent); border: 1px solid rgba(74, 222, 128, 0.2);">
-                <i class="fas fa-play-circle"></i> LISTEN RESULT
-            </button>
-            <button class="btn-premium" onclick="copyResult()">
-                <i class="fas fa-copy"></i> COPY
-            </button>
+            <button class="btn-p" onclick="playAudio('output')" style="background: var(--p);"><i class="fas fa-play"></i> LISTEN RESULT</button>
+            <button class="btn-p" onclick="copyResult()"><i class="fas fa-copy"></i> COPY</button>
         </div>
     </div>
 
-    <div class="status-badge" id="status">PREMIUM AUDIO ENGINE ACTIVE</div>
+    <div class="status" id="status">ELITE SYSTEM ACTIVE</div>
 </div>
 
 <script>
-    // Database 100+ Bahasa
-    const langs = {"af":"Afrikaans","sq":"Albanian","am":"Amharic","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian Creole","ha":"Hausa","iw":"Hebrew","hi":"Hindi","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Myanmar","ne":"Nepalese","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sr":"Serbian","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","zu":"Zulu"};
+    const langs = {"af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","zh-CN":"Chinese","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","de":"German","el":"Greek","gu":"Gujarati","hi":"Hindi","hu":"Hungarian","is":"Icelandic","id":"Indonesian","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","km":"Khmer","ko":"Korean","la":"Latin","lv":"Latvian","lt":"Lithuanian","ms":"Malay","ml":"Malayalam","mr":"Marathi","ne":"Nepalese","no":"Norwegian","pl":"Polish","pt":"Portuguese","ro":"Romanian","ru":"Russian","sr":"Serbian","sk":"Slovak","sl":"Slovenian","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","vi":"Vietnamese"};
 
-    const src = document.getElementById('srcLang');
-    const target = document.getElementById('targetLang');
-    const status = document.getElementById('status');
+    const src = document.getElementById('srcLang'), target = document.getElementById('targetLang'), status = document.getElementById('status');
 
     Object.entries(langs).forEach(([code, name]) => {
         const opt = `<option value="${code}">${name.toUpperCase()}</option>`;
@@ -133,57 +67,55 @@
 
     let timer;
     function trigger() {
-        status.innerText = 'MEMPROSES...';
+        status.innerText = 'SINKRONISASI...';
         clearTimeout(timer);
         timer = setTimeout(translate, 600);
     }
 
     async function translate() {
         const text = document.getElementById('inputText').value;
-        const out = document.getElementById('outputText');
-        if(!text) { out.innerText = '...'; status.innerText = 'READY'; return; }
-
+        if(!text) { document.getElementById('outputText').innerText = '...'; status.innerText = 'READY'; return; }
         try {
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src.value}&tl=${target.value}&dt=t&q=${encodeURIComponent(text)}`;
-            const res = await fetch(url);
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src.value}&tl=${target.value}&dt=t&q=${encodeURIComponent(text)}`);
             const data = await res.json();
-            if(data && data[0]) {
-                out.innerText = data[0].map(x => x[0]).join("");
-                status.innerText = 'TRANSLATED';
-            }
-        } catch (e) { status.innerText = 'CONNECTION ERROR'; }
+            document.getElementById('outputText').innerText = data[0].map(x => x[0]).join("");
+            status.innerText = 'TERJEMAH BERHASIL';
+        } catch (e) { status.innerText = 'KONEKSI BERMASALAH'; }
     }
 
-    // FUNGSI LISTEN (AUDIO) PERBAIKAN
-    function playAudio(text, langCode) {
+    // FUNGSI LISTEN TERKUAT (Google TTS Engine)
+    function playAudio(type) {
+        const text = type === 'input' ? document.getElementById('inputText').value : document.getElementById('outputText').innerText;
+        const lang = type === 'input' ? (src.value === 'auto' ? 'id' : src.value) : target.value;
+        
         if (!text || text === '...') return;
-        window.speechSynthesis.cancel(); // Reset suara sebelumnya biar gak tumpang tindih
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = langCode;
-        utterance.rate = 0.9; // Kecepatan sedikit diperlambat biar jelas
-        window.speechSynthesis.speak(utterance);
+
+        // Pake API Google TTS eksternal biar pasti bunyi
+        const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`);
+        audio.play().catch(e => {
+            // Backup kalo API block, balik ke sistem browser
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = lang;
+            window.speechSynthesis.speak(u);
+        });
     }
 
-    window.speakInput = () => playAudio(document.getElementById('inputText').value, src.value === 'auto' ? 'id-ID' : src.value);
-    window.speakOutput = () => playAudio(document.getElementById('outputText').innerText, target.value);
-
-    window.copyResult = () => {
+    function copyResult() {
         navigator.clipboard.writeText(document.getElementById('outputText').innerText);
-        status.innerText = 'COPIED!';
-        setTimeout(() => status.innerText = 'READY', 2000);
-    };
+        status.innerText = 'TEXT DISALIN!';
+    }
 
-    window.clearText = () => {
+    function clearText() {
         document.getElementById('inputText').value = '';
         document.getElementById('outputText').innerText = '...';
-        status.innerText = 'CLEARED';
-    };
+        status.innerText = 'DIBERSIHKAN';
+    }
 
-    window.swap = () => {
+    function swap() {
         if(src.value === 'auto') return;
         const t = src.value; src.value = target.value; target.value = t;
         translate();
-    };
+    }
 </script>
 </body>
 </html>
