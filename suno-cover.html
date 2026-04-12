@@ -3,111 +3,221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Suno Cover Sederhana</title>
+  <title>Suno Cover</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { background: #0f0f17; font-family: system-ui, sans-serif; }
+    .card { background: #181824; border: 1px solid #27272f; }
+  </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen p-4">
+<body class="text-white min-h-screen p-6">
 
 <div class="max-w-lg mx-auto">
 
   <h1 class="text-3xl font-bold text-center mb-8">Suno Cover</h1>
 
   <!-- API Key -->
-  <input id="apiKey" type="password" placeholder="Paste ApiPass API Key di sini" 
+  <input id="apiKey" type="password" placeholder="Masukkan ApiPass API Key" 
          class="w-full p-4 rounded-2xl bg-zinc-900 mb-6 text-sm">
 
-  <!-- Upload -->
-  <div onclick="document.getElementById('fileInput').click()" 
-       class="border-2 border-dashed border-zinc-700 hover:border-purple-500 rounded-3xl p-10 text-center cursor-pointer mb-6">
-    <i class="fas fa-cloud-upload-alt text-4xl mb-3 text-purple-400"></i>
-    <p>Upload Audio Original</p>
+  <!-- Upload Audio -->
+  <div id="uploadArea" class="card rounded-3xl p-10 text-center cursor-pointer hover:border-purple-500 mb-6">
+    <i class="fas fa-cloud-upload-alt text-5xl mb-4 text-purple-400"></i>
+    <p class="font-medium">Upload Audio Original</p>
+    <p class="text-zinc-500 text-sm">MP3, WAV, M4A</p>
   </div>
   <input type="file" id="fileInput" accept="audio/*" class="hidden">
 
-  <div id="urlStatus" class="text-emerald-400 text-xs mb-6 text-center hidden"></div>
+  <div id="urlStatus" class="hidden text-emerald-400 text-xs mb-6 text-center break-all"></div>
 
-  <!-- Prompt -->
-  <textarea id="prompt" rows="4" placeholder="Tulis lirik atau deskripsi cover yang diinginkan..." 
-            class="w-full p-4 rounded-3xl bg-zinc-900 mb-6"></textarea>
+  <!-- Prompt / Lirik -->
+  <textarea id="prompt" rows="4" placeholder="Tulis lirik atau deskripsi yang diinginkan..." 
+            class="card w-full p-5 rounded-3xl mb-6"></textarea>
 
-  <!-- Vocal -->
+  <!-- Style Music Genre -->
   <div class="mb-6">
-    <p class="text-zinc-400 text-sm mb-2">Vocal Gender</p>
-    <select id="vocal" class="w-full p-4 rounded-2xl bg-zinc-900">
-      <option value="f">Female</option>
-      <option value="m">Male</option>
-    </select>
+    <p class="text-xs text-zinc-400 mb-2">Style / Music Genre</p>
+    <input id="style" type="text" placeholder="dangdut koplo, jazz, upbeat pop, rock" 
+           class="card w-full p-4 rounded-2xl">
+  </div>
+
+  <!-- Model & Vocal -->
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div>
+      <p class="text-xs text-zinc-400 mb-2">Model</p>
+      <select id="modelVersion" class="card w-full p-4 rounded-2xl">
+        <option value="V5">V5 (Recommended)</option>
+        <option value="V4_5">V4.5</option>
+      </select>
+    </div>
+    <div>
+      <p class="text-xs text-zinc-400 mb-2">Vocal</p>
+      <select id="vocalGender" class="card w-full p-4 rounded-2xl">
+        <option value="f">Female</option>
+        <option value="m">Male</option>
+      </select>
+    </div>
   </div>
 
   <!-- Weights -->
-  <div class="grid grid-cols-2 gap-4 mb-8">
+  <div class="grid grid-cols-2 gap-6 mb-8">
     <div>
       <p class="text-xs text-zinc-400 mb-1">Style Weight <span id="sw" class="font-mono">0.5</span></p>
       <input type="range" id="styleWeight" min="0" max="1" step="0.1" value="0.5" 
-             oninput="document.getElementById('sw').textContent=this.value" class="w-full">
+             oninput="document.getElementById('sw').textContent=this.value" class="w-full accent-purple-500">
     </div>
     <div>
       <p class="text-xs text-zinc-400 mb-1">Audio Weight <span id="aw" class="font-mono">0.3</span></p>
       <input type="range" id="audioWeight" min="0" max="1" step="0.1" value="0.3" 
-             oninput="document.getElementById('aw').textContent=this.value" class="w-full">
+             oninput="document.getElementById('aw').textContent=this.value" class="w-full accent-purple-500">
     </div>
   </div>
 
-  <!-- Generate -->
-  <button onclick="startGenerate()" id="btn"
-          class="w-full py-5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl text-lg font-semibold">
+  <!-- Exclude Styles -->
+  <div class="mb-8">
+    <p class="text-xs text-zinc-400 mb-2">Exclude Styles (optional)</p>
+    <input id="exclude" type="text" placeholder="rock, metal, slow, classical" 
+           class="card w-full p-4 rounded-2xl">
+  </div>
+
+  <!-- Generate Button -->
+  <button onclick="generateCover()" id="btn"
+          class="w-full py-6 bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl text-xl font-semibold">
     Generate Cover
   </button>
 
-  <!-- Output Area -->
-  <div id="output" class="hidden mt-10">
-    <p class="text-center text-zinc-400 mb-4">Hasil Cover:</p>
-    <div id="player" class="bg-zinc-900 rounded-3xl p-4"></div>
+  <!-- Output -->
+  <div id="result" class="hidden mt-12 card rounded-3xl p-6">
+    <p class="text-zinc-400 mb-4 text-center">Hasil Cover:</p>
+    <div id="player"></div>
   </div>
 
 </div>
 
 <script>
-// Upload otomatis ke catbox
+let audioUrl = null;
+
+// Upload
+document.getElementById('uploadArea').onclick = () => document.getElementById('fileInput').click();
+
 document.getElementById('fileInput').onchange = async (e) => {
   const file = e.target.files[0];
+  if (!file) return;
+
   const form = new FormData();
   form.append('reqtype', 'fileupload');
   form.append('fileToUpload', file);
 
-  const res = await fetch('https://catbox.moe/user/api.php', {method: 'POST', body: form});
-  const url = await res.text();
-  window.audioUrl = url.trim();
-  document.getElementById('urlStatus').innerHTML = `✅ Audio terupload: <span class="font-mono text-[10px]">${url}</span>`;
-  document.getElementById('urlStatus').classList.remove('hidden');
+  try {
+    const res = await fetch('https://catbox.moe/user/api.php', {method: 'POST', body: form});
+    const url = await res.text();
+    if (url.startsWith('http')) {
+      audioUrl = url.trim();
+      document.getElementById('urlStatus').innerHTML = `✅ Audio terupload<br><span class="font-mono text-[10px]">${audioUrl}</span>`;
+      document.getElementById('urlStatus').classList.remove('hidden');
+    }
+  } catch(err) {
+    alert('Upload gagal');
+  }
 };
 
-async function startGenerate() {
+async function generateCover() {
   const apiKey = document.getElementById('apiKey').value.trim();
-  if (!apiKey) return alert("Masukkan API Key dulu!");
-  if (!window.audioUrl) return alert("Upload audio dulu!");
+  const prompt = document.getElementById('prompt').value.trim();
+  const style = document.getElementById('style').value.trim();
+
+  if (!apiKey) return alert("Masukkan API Key ApiPass!");
+  if (!audioUrl) return alert("Upload audio dulu!");
+  if (!prompt && !style) return alert("Isi Prompt atau Style dulu!");
 
   const btn = document.getElementById('btn');
   btn.disabled = true;
-  btn.textContent = "Sedang diproses...";
+  btn.innerHTML = 'Generating...';
 
   const payload = {
     model: "suno/cover",
     input: {
-      audioUrl: window.audioUrl,
-      prompt: document.getElementById('prompt').value.trim(),
-      vocalGender: document.getElementById('vocal').value,
+      audioUrl: audioUrl,
+      prompt: prompt,
+      style: style,
+      model_version: document.getElementById('modelVersion').value,
+      vocalGender: document.getElementById('vocalGender').value,
       styleWeight: parseFloat(document.getElementById('styleWeight').value),
-      audioWeight: parseFloat(document.getElementById('audioWeight').value)
+      audioWeight: parseFloat(document.getElementById('audioWeight').value),
+      negativeTags: document.getElementById('exclude').value.trim()
     }
   };
 
-  // ... (bagian fetch createTask + polling tetap sama seperti sebelumnya)
+  try {
+    const res = await fetch("https://api.apipass.dev/api/v1/jobs/createTask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
 
-  // Untuk sekarang, aku kasih versi ringkas dulu. Kalau mau full polling + player, bilang "kasih full code lengkap"
+    const data = await res.json();
+    const taskId = data.taskId || data.id;
+
+    if (taskId) {
+      pollResult(apiKey, taskId);
+    } else {
+      alert("Gagal: " + (data.message || "Unknown error"));
+      resetBtn();
+    }
+  } catch (err) {
+    alert("Error: " + err.message);
+    resetBtn();
+  }
 }
 
+function pollResult(apiKey, taskId) {
+  let attempts = 0;
+  const interval = setInterval(async () => {
+    attempts++;
+    try {
+      const res = await fetch(`https://api.apipass.dev/api/v1/jobs/recordInfo?taskId=${taskId}`, {
+        headers: { "Authorization": `Bearer ${apiKey}` }
+      });
+      const result = await res.json();
+
+      if (result.status === "completed" && result.output?.audioUrl) {
+        clearInterval(interval);
+        showPlayer(result.output.audioUrl);
+      } else if (result.status === "failed") {
+        clearInterval(interval);
+        alert("Generation gagal");
+        resetBtn();
+      }
+    } catch(e) {}
+
+    if (attempts > 60) {
+      clearInterval(interval);
+      alert("Waktu habis. Coba lagi.");
+      resetBtn();
+    }
+  }, 5000);
+}
+
+function showPlayer(url) {
+  document.getElementById('player').innerHTML = `
+    <audio controls class="w-full rounded-2xl" style="background:#27272a">
+      <source src="${url}" type="audio/mpeg">
+    </audio>
+    <a href="${url}" download class="mt-4 block text-center text-emerald-400">Download MP3</a>
+  `;
+  document.getElementById('result').classList.remove('hidden');
+  resetBtn();
+}
+
+function resetBtn() {
+  const btn = document.getElementById('btn');
+  btn.disabled = false;
+  btn.innerHTML = 'Generate Cover';
+}
 </script>
 </body>
 </html>
