@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAI Roots Master Generator - V8.2 Platform Invader</title>
+    <style>
+        :root { --primary: #2ecc71; --accent: #3498db; --bg: #0f0f0f; --card-bg: #1a1a1a; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: white; padding: 20px; line-height: 1.6; margin: 0; }
+        .box { max-width: 850px; margin: 40px auto; background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid #333; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
+        h2 { text-align: center; color: var(--primary); letter-spacing: 2px; margin-bottom: 25px; font-weight: 800; }
+        label { display: block; color: #888; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; letter-spacing: 1px; }
+        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: #fff; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--primary); }
+        
+        /* EDITOR FULL SCREEN LOGIC */
+        .lyric-container { position: relative; width: 100%; margin-top: 5px; }
+        textarea { 
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; 
+            background: #000; color: #fff; box-sizing: border-box; font-size: 16px;
+            min-height: 250px; transition: 0.3s; resize: vertical; outline: none;
+        }
+        .fs-btn {
+            position: absolute; right: 10px; top: 10px; background: var(--primary);
+            border: none; color: #000; padding: 6px 12px; border-radius: 8px;
+            cursor: pointer; font-size: 11px; font-weight: bold; z-index: 10;
+        }
+        .full-screen-active {
+            position: fixed !important; top: 0 !important; left: 0 !important; 
+            width: 100vw !important; height: 100vh !important; 
+            z-index: 9999 !important; background: #000 !important; 
+            padding: 60px 20px 20px 20px !important; border: none !important; border-radius: 0 !important;
+        }
+        .exit-btn {
+            display: none; position: fixed; top: 15px; right: 15px;
+            background: #e74c3c; color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-size: 20px; font-weight: bold; cursor: pointer; z-index: 10000;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button#mainGen { width: 100%; padding: 18px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; cursor: pointer; font-weight: 900; border-radius: 14px; font-size: 16px; margin-top: 25px; text-transform: uppercase; }
+        button#copyBtn { width: 100%; padding: 18px; background: linear-gradient(135deg, #2980b9, #3498db); color: white; border: none; cursor: pointer; display: none; margin-top: 12px; border-radius: 14px; font-weight: 900; }
+        #finalCode { background: #050505; color: #2ecc71; padding: 20px; border-radius: 15px; border: 1px solid #222; display: none; white-space: pre-wrap; font-size: 11px; height: 350px; overflow: auto; margin-top: 25px; font-family: 'Courier New', monospace; border-left: 4px solid var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🎵 SAI ROOTS GEN V8.2</h2>
+    
+    <label>Judul Lagu:</label>
+    <input type="text" id="t" placeholder="Masukkan Judul..." oninput="s_gen()">
+    
+    <div class="grid">
+        <div><label>Artist Utama:</label><input type="text" id="art" value="SAI Roots"></div>
+        <div><label>Album:</label><input type="text" id="a" value="Single"></div>
+    </div>
+
+    <div class="grid">
+        <div><label>Slug URL (File):</label><input type="text" id="s" placeholder="slugurl"></div>
+        <div><label>Tahun Rilis:</label><input type="text" id="yr" value="2026"></div>
+    </div>
+    
+    <label>Lirik Lagu:</label>
+    <div class="lyric-container">
+        <button class="fs-btn" id="fsBtn" onclick="openFS()">Full Screen</button>
+        <button class="exit-btn" id="exitBtn" onclick="closeFS()">×</button>
+        <textarea id="l" placeholder="Paste lirik di sini..."></textarea>
+    </div>
+    
+    <button id="mainGen" onclick="proses()">GENERATE PLATFORM INVADER CODE</button>
+    <button id="copyBtn" onclick="salin()">SALIN KODE HTML</button>
+
+    <pre id="finalCode"></pre>
+</div>
+
+<script>
+    function openFS() {
+        document.getElementById('l').classList.add('full-screen-active');
+        document.getElementById('exitBtn').style.display = 'block';
+        document.getElementById('fsBtn').style.display = 'none';
+    }
+
+    function closeFS() {
+        document.getElementById('l').classList.remove('full-screen-active');
+        document.getElementById('exitBtn').style.display = 'none';
+        document.getElementById('fsBtn').style.display = 'block';
+    }
+
+    function s_gen() {
+        var val = document.getElementById('t').value;
+        var slug = val.toLowerCase().replace(/[^a-z0-9]/g, ''); 
+        document.getElementById('s').value = slug;
+    }
+
+    function aiSmartFix(text) {
+        return text.split('\n').map(line => {
+            let l = line.trim();
+            if (l === "") return "";
+            l = l.replace(/(\w)-(\w)/g, '$1 $2').replace(/\.+$/, ""); 
+            return l.charAt(0).toUpperCase() + l.slice(1); 
+        }).join('\n');
+    }
+
+    function proses() {
+        var judul = document.getElementById('t').value;
+        var artist = document.getElementById('art').value;
+        var slugInput = document.getElementById('s').value;
+        var album = document.getElementById('a').value;
+        var tahun = document.getElementById('yr').value;
+        var lirik = aiSmartFix(document.getElementById('l').value);
+        var songParam = judul.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+        if(!judul || !lirik) { alert("Judul dan Lirik wajib diisi!"); return; }
+
+        var output = `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lirik resmi ${judul} oleh ${artist}. Produksi SAI Roots Music, diciptakan oleh Ahmad Supembri. Tersedia di Spotify, YouTube Music, dan Apple Music.">
+    <meta name="keywords" content="${judul}, ${artist}, Ahmad Supembri, SAI Roots Music, Lirik Lagu, Official, Reggae Indonesia, Spotify Lyrics, YouTube Music Lyrics">
+    <meta name="author" content="Ahmad Supembri">
+    
+    <meta property="og:title" content="Lirik ${judul} - ${artist}">
+    <meta property="og:description" content="Official Lyric by Ahmad Supembri (SAI Roots Music)">
+    <meta property="og:image" content="https://raw.githubusercontent.com/pembri/SAI-Roots-Official/main/sairoots.jpg">
+    <meta property="og:type" content="music.song">
+    
+    <link rel="icon" type="image/x-icon" href="https://sairootsmusic.github.io/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="https://sairootsmusic.github.io/favicon.ico">
+    <title>Lirik ${judul} - ${artist}</title>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "SAI Roots Music",
+          "url": "https://sairootsmusic.github.io"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://sairootsmusic.github.io" },
+            { "@type": "ListItem", "position": 2, "name": "Lyric", "item": "https://sairootsmusic.github.io/lyric" }
+          ]
+        },
+        {
+          "@type": "MusicRecording",
+          "name": "${judul}",
+          "url": "https://sairootsmusic.github.io/lyric/${slugInput}.html",
+          "datePublished": "${tahun}",
+          "byArtist": { "@type": "MusicGroup", "name": "${artist}" },
+          "inAlbum": { "@type": "MusicAlbum", "name": "${album}" },
+          "recordingOf": {
+            "@type": "MusicComposition",
+            "name": "${judul}",
+            "lyricist": { "@type": "Person", "name": "Ahmad Supembri" },
+            "composer": { "@type": "Person", "name": "Ahmad Supembri" },
+            "producer": { "@type": "Person", "name": "Ahmad Supembri" },
+            "copyrightHolder": { "@type": "Person", "name": "Ahmad Supembri" },
+            "publisher": { "@type": "Organization", "name": "SAI Roots Music" }
+          }
+        }
+      ]
+    }
+    <\/script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #0a0a0a; color: #fff; display: flex; justify-content: center; padding: 20px; }
+        .wrapper { max-width: 500px; width: 100%; }
+        .nav-buttons { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+        .nav-row { display: flex; flex-wrap: wrap; gap: 8px; }
+        .btn-nav { text-decoration: none; color: #888; font-size: 11px; padding: 8px 14px; border-radius: 20px; border: 1px solid #333; transition: 0.3s; font-weight: 700; text-transform: uppercase; }
+        .btn-listen { background: rgba(46, 204, 113, 0.1); border-color: #2ecc71; color: #fff; width: fit-content; }
+        .btn-nav:hover { border-color: #2ecc71; color: #fff; }
+        .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 35px; padding: 45px 35px; }
+        h1 { font-size: 34px; margin: 0; letter-spacing: -1.5px; line-height: 1.1; font-weight: 700; }
+        .artist { color: #2ecc71; font-size: 17px; font-weight: 700; margin-top: 5px; }
+        .album-info { color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; margin-bottom: 30px; }
+        pre { white-space: pre-wrap; line-height: 2.1; color: #d1d1d1; border-left: 3px solid #2ecc71; padding-left: 22px; margin-top: 10px; font-family: 'Poppins', sans-serif; font-size: 16px; }
+        .footer { text-align: center; margin-top: 60px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="nav-buttons">
+        <div class="nav-row">
+            <a href="/" class="btn-nav">Home</a>
+            <a href="/lyric" class="btn-nav">List Lyric</a>
+            <a href="/music" class="btn-nav">Stream Discography</a>
+        </div>
+        <a href="/music?song=${songParam}" class="btn-nav btn-listen">Listen to ${artist} - ${judul}</a>
+    </div>
+    <div class="card">
+        <h1>${judul}</h1>
+        <div class="artist">${artist}</div>
+        <div class="album-info">${album} • ${tahun}</div>
+        <pre>${lirik}</pre>
+    </div>
+    <div class="footer">© ${tahun} ${artist}. All Rights Reserved.</div>
+</div>
+</body>
+</html>`;
+
+        document.getElementById('finalCode').textContent = output;
+        document.getElementById('finalCode').style.display = "block";
+        document.getElementById('copyBtn').style.display = "block";
+    }
+
+    function salin() {
+        var copyText = document.getElementById("finalCode").textContent;
+        var el = document.createElement('textarea');
+        el.value = copyText;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert("KODE DISALIN! TARGET: SPOTIFY, YT MUSIC, & MUSIXMATCH.");
+    }
+</script>
+</body>
+</html>
