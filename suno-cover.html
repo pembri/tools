@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suno Cover - Real ApiPass</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+<div class="max-w-6xl mx-auto p-6">
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-blue-400">Suno Cover</h1>
+    <p class="text-gray-400 mt-2">AI Music Cover Generator • Powered by ApiPass.dev</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- INPUT SECTION -->
+    <div class="bg-gray-900 rounded-3xl p-8">
+      <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+        <i class="fas fa-cog"></i> Settings
+      </h2>
+
+      <div class="space-y-6">
+        <!-- API Key -->
+        <div>
+          <label class="block text-sm font-medium mb-2">ApiPass API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-ap-xxxxxxxxxxxxxxxx" 
+                 class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4 focus:outline-none focus:border-blue-500">
+        </div>
+
+        <!-- Audio URL -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Public Audio URL <span class="text-red-500">*</span></label>
+          <input type="text" id="audioUrl" placeholder="https://files.catbox.moe/abc123.mp3" 
+                 class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4 focus:outline-none focus:border-blue-500">
+          <p class="text-xs text-gray-500 mt-1">Dapatkan dari halaman upload-audio.html</p>
+        </div>
+
+        <!-- Model Version & Continue At -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Model Version</label>
+            <select id="modelVersion" class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4">
+              <option value="V5" selected>V5 (Latest)</option>
+              <option value="V4_5PLUS">V4.5 Plus</option>
+              <option value="V4_5ALL">V4.5 All</option>
+              <option value="V4_5">V4.5</option>
+              <option value="V4">V4</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Continue At (detik)</label>
+            <input type="number" id="continueAt" value="0" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4">
+          </div>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="flex gap-8">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="customMode" class="w-5 h-5 accent-blue-500">
+            <span class="text-sm">Custom Mode</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="instrumental" class="w-5 h-5 accent-blue-500">
+            <span class="text-sm">Instrumental Only</span>
+          </label>
+        </div>
+
+        <!-- Prompt -->
+        <div id="promptDiv">
+          <label class="block text-sm font-medium mb-2">Prompt</label>
+          <textarea id="prompt" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4" 
+                    placeholder="Transform this song into energetic EDM with female vocals..."></textarea>
+        </div>
+
+        <!-- Custom Mode Fields -->
+        <div id="customDiv" class="hidden space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Style</label>
+            <input type="text" id="style" class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4" placeholder="EDM, Rock, Jazz, Lo-fi">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Title</label>
+            <input type="text" id="title" class="w-full bg-gray-800 border border-gray-700 rounded-2xl p-4" placeholder="My Awesome Cover">
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button onclick="runCover()" 
+                class="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-3xl font-bold text-lg flex items-center justify-center gap-3">
+          <i class="fas fa-play"></i> GENERATE SUNO COVER
+        </button>
+      </div>
+    </div>
+
+    <!-- OUTPUT SECTION -->
+    <div class="bg-gray-900 rounded-3xl p-8">
+      <h2 class="text-2xl font-semibold mb-6">Generation Result</h2>
+      
+      <div id="status" class="min-h-[420px] bg-gray-950 rounded-2xl p-6 flex items-center justify-center text-center text-gray-400">
+        Hasil akan muncul di sini setelah generation selesai
+      </div>
+
+      <div id="resultArea" class="hidden mt-6">
+        <div id="audioResults" class="space-y-6"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentTaskId = null;
+
+document.getElementById('customMode').onchange = function() {
+  const isCustom = this.checked;
+  document.getElementById('customDiv').classList.toggle('hidden', !isCustom);
+  document.getElementById('promptDiv').classList.toggle('hidden', isCustom);
+};
+
+async function runCover() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const audioUrl = document.getElementById('audioUrl').value.trim();
+
+  if (!apiKey) return alert("❌ Masukkan ApiPass API Key terlebih dahulu!");
+  if (!audioUrl) return alert("❌ Masukkan Public Audio URL!");
+
+  const statusEl = document.getElementById('status');
+  statusEl.innerHTML = `<p class="text-blue-400">Mengirim permintaan ke Suno Cover...</p>`;
+
+  const payload = {
+    model: "suno/cover",
+    input: {
+      model_version: document.getElementById('modelVersion').value,
+      audioUrl: audioUrl,
+      customMode: document.getElementById('customMode').checked,
+      instrumental: document.getElementById('instrumental').checked,
+      prompt: document.getElementById('prompt').value || null,
+      style: document.getElementById('style').value || null,
+      title: document.getElementById('title').value || null,
+      continueAt: parseInt(document.getElementById('continueAt').value) || 0,
+      vocalGender: "f",
+      styleWeight: 0.5,
+      audioWeight: 0.5
+    }
+  };
+
+  try {
+    const res = await fetch("https://api.apipass.dev/api/v1/jobs/createTask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (data.code === 200 && data.data?.taskId) {
+      currentTaskId = data.data.taskId;
+      statusEl.innerHTML = `<p class="text-green-400">Task berhasil dibuat!<br>Task ID: <span class="font-mono">${currentTaskId}</span><br><br>Sedang diproses (60-120 detik)...</p>`;
+      document.getElementById('resultArea').classList.remove('hidden');
+      setTimeout(checkStatus, 30000);
+    } else {
+      statusEl.innerHTML = `<p class="text-red-400">Error: ${data.message || JSON.stringify(data)}</p>`;
+    }
+  } catch (err) {
+    statusEl.innerHTML = `<p class="text-red-400">Koneksi gagal: ${err.message}</p>`;
+  }
+}
+
+async function checkStatus() {
+  if (!currentTaskId) return;
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const statusEl = document.getElementById('status');
+
+  try {
+    const res = await fetch(`https://api.apipass.dev/api/v1/jobs/recordInfo?taskId=${currentTaskId}`, {
+      headers: { "Authorization": `Bearer ${apiKey}` }
+    });
+
+    const data = await res.json();
+
+    if (data.code === 200) {
+      const state = data.data?.state;
+
+      if (state === "success" && data.data.resultJson?.data) {
+        let html = `<p class="text-green-400 text-xl mb-6">✅ Generation Berhasil!</p>`;
+
+        data.data.resultJson.data.forEach((item, i) => {
+          html += `
+            <div class="bg-gray-800 rounded-2xl p-6">
+              <p class="font-semibold mb-4">Variation ${i+1}</p>
+              <audio controls src="${item.audio_url}" class="w-full mb-4"></audio>
+              <a href="\( {item.audio_url}" download="suno-cover-variation- \){i+1}.mp3"
+                 class="block w-full text-center bg-blue-600 hover:bg-blue-700 py-3 rounded-2xl font-medium">
+                ⬇️ Download MP3 Variation ${i+1}
+              </a>
+            </div>`;
+        });
+
+        document.getElementById('audioResults').innerHTML = html;
+        statusEl.innerHTML = `<p class="text-green-400">Selesai! Silakan putar atau download audio di bawah.</p>`;
+      } 
+      else if (state === "fail") {
+        statusEl.innerHTML = `<p class="text-red-400">Generation gagal: ${data.data.failMsg || 'Unknown error'}</p>`;
+      } 
+      else {
+        statusEl.innerHTML = `<p class="text-yellow-400">Masih diproses... Status saat ini: ${state || 'processing'}</p>`;
+        setTimeout(checkStatus, 15000);
+      }
+    }
+  } catch (err) {
+    statusEl.innerHTML = `<p class="text-red-400">Gagal mengecek status task</p>`;
+  }
+}
+</script>
+</body>
+</html>
