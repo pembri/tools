@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Audio - Catbox.moe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white">
+<div class="max-w-lg mx-auto mt-20 p-8 bg-gray-900 rounded-3xl">
+  <h1 class="text-3xl font-bold text-center mb-8">Upload Audio</h1>
+  <p class="text-center text-gray-400 mb-8">Upload lagu kamu di sini untuk mendapatkan Public URL</p>
+
+  <input type="file" id="fileInput" accept="audio/*" class="block w-full mb-6 text-sm">
+  
+  <button onclick="uploadFile()" 
+          class="w-full bg-green-600 hover:bg-green-700 py-4 rounded-2xl font-bold text-lg">
+    Upload ke Catbox.moe
+  </button>
+
+  <div id="result" class="hidden mt-8">
+    <p class="text-sm text-gray-400 mb-2">Public URL (Copy ini):</p>
+    <input id="urlOutput" readonly class="w-full bg-gray-800 p-4 rounded-2xl text-blue-400 font-mono text-sm">
+    <button onclick="copyUrl()" class="mt-4 text-blue-400 underline">Copy URL</button>
+  </div>
+</div>
+
+<script>
+async function uploadFile() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) return alert("Pilih file audio terlebih dahulu!");
+
+  const formData = new FormData();
+  formData.append("reqtype", "fileupload");
+  formData.append("fileToUpload", file);
+
+  const status = document.createElement('p');
+  status.textContent = "Sedang upload...";
+  document.body.appendChild(status);
+
+  try {
+    const res = await fetch("https://catbox.moe/user/api.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const url = await res.text();
+    if (url.startsWith("https://")) {
+      document.getElementById('urlOutput').value = url;
+      document.getElementById('result').classList.remove('hidden');
+      alert("Upload berhasil! Copy URL dan paste ke suno-cover.html");
+    } else {
+      alert("Upload gagal: " + url);
+    }
+  } catch (e) {
+    alert("Error upload: " + e.message);
+  }
+}
+
+function copyUrl() {
+  const url = document.getElementById('urlOutput').value;
+  navigator.clipboard.writeText(url);
+  alert("URL berhasil dicopy!");
+}
+</script>
+</body>
+</html>
