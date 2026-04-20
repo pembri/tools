@@ -3,384 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PulseCover • Suno V5 Cover</title>
+    <title>PulseCover • Suno Cover</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
-        .neon { text-shadow: 0 0 15px #22d3ee; }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
 
-<div class="max-w-xl mx-auto">
+<div class="max-w-xl mx-auto p-5">
 
-    <!-- Header -->
-    <div class="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-5 py-4 flex justify-between items-center z-50">
+    <div class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-cyan-500 rounded-3xl flex items-center justify-center text-3xl">♪</div>
+            <div class="w-11 h-11 bg-cyan-500 rounded-3xl flex items-center justify-center text-4xl">♪</div>
             <div>
-                <div class="font-bold text-2xl neon">PulseCover</div>
-                <div class="text-xs text-cyan-400">Suno V5 Cover</div>
+                <div class="text-2xl font-bold">PulseCover</div>
+                <div class="text-cyan-400 text-sm">Suno V5 Cover</div>
             </div>
         </div>
-        <div onclick="showApiModal()" class="flex items-center gap-2 bg-zinc-800 px-5 py-2 rounded-3xl text-sm cursor-pointer">
+        <div onclick="showApiModal()" class="px-5 py-2 bg-zinc-800 rounded-3xl flex items-center gap-2 cursor-pointer">
             <i class="fa-solid fa-key"></i>
-            <span id="api-status" class="font-medium">Hubungkan API Key</span>
-            <div id="api-dot" class="w-3 h-3 rounded-full bg-red-500"></div>
+            <span id="api-status">API Key</span>
         </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="flex border-b border-zinc-800 bg-zinc-900">
-        <button onclick="switchTab(0)" id="tab-playground" 
-                class="flex-1 py-4 text-center font-semibold border-b-2 border-cyan-400 text-cyan-400">Playground</button>
-        <button onclick="switchTab(1)" id="tab-history" 
-                class="flex-1 py-4 text-center font-semibold text-zinc-400">Riwayat Cover</button>
-    </div>
+    <form id="form" onsubmit="createTask(event)" class="space-y-6">
 
-    <!-- === PLAYGROUND PAGE === -->
-    <div id="page-playground" class="p-5">
-        <div id="key-warning" class="hidden bg-amber-400/10 border border-amber-400 text-amber-400 p-4 rounded-2xl mb-6 text-sm">
-            ⚠️ Masukkan API Key terlebih dahulu
+        <div>
+            <label class="block text-xs text-zinc-400 mb-2">SOURCE AUDIO URL (harus publik)</label>
+            <input type="url" id="audioUrl" placeholder="https://contoh.com/lagu.mp3" required
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 text-base">
         </div>
 
-        <form id="cover-form" onsubmit="createTask(event)">
-            <div class="space-y-6">
+        <div>
+            <label class="block text-xs text-zinc-400 mb-2">COVER PROMPT</label>
+            <textarea id="prompt" rows="4" placeholder="Transform into roots reggae 1970s style, warm analog sound..." 
+                      class="w-full bg-zinc-900 border border-zinc-700 rounded-3xl px-5 py-4"></textarea>
+        </div>
 
-                <div>
-                    <label class="text-xs text-zinc-400 mb-1 block">MODEL VERSION</label>
-                    <select id="model_version" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                        <option value="V5">V5 (Latest)</option>
-                        <option value="V4_5ALL">V4.5 All</option>
-                        <option value="V4_5PLUS">V4.5 Plus</option>
-                        <option value="V4_5">V4.5</option>
-                        <option value="V4">V4</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="text-xs text-zinc-400 mb-1 block">SOURCE AUDIO URL (PUBLIC)</label>
-                    <input type="url" id="audioUrl" placeholder="https://example.com/lagu-ori.mp3" required
-                           class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <label class="flex items-center gap-3 p-4 bg-zinc-900 border border-zinc-700 rounded-2xl">
-                        <input type="checkbox" id="customMode" class="accent-cyan-400">
-                        <span>Custom Mode</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-4 bg-zinc-900 border border-zinc-700 rounded-2xl">
-                        <input type="checkbox" id="instrumental" class="accent-cyan-400">
-                        <span>Instrumental Only</span>
-                    </label>
-                </div>
-
-                <div>
-                    <label class="text-xs text-zinc-400 mb-1 block">COVER PROMPT</label>
-                    <textarea id="prompt" rows="3" placeholder="Transform into smooth jazz..." 
-                              class="w-full bg-zinc-900 border border-zinc-700 rounded-3xl px-5 py-4"></textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs text-zinc-400 mb-1 block">TARGET STYLE</label>
-                        <input type="text" id="style" value="Jazz, Smooth, Lounge" 
-                               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                    </div>
-                    <div>
-                        <label class="text-xs text-zinc-400 mb-1 block">COVER TITLE</label>
-                        <input type="text" id="title" value="My Song (Pulse Cover)" 
-                               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs text-zinc-400 mb-1 block">START AT (detik)</label>
-                        <input type="number" id="continueAt" value="0" min="0" 
-                               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                    </div>
-                    <div>
-                        <label class="text-xs text-zinc-400 mb-1 block">VOCAL GENDER</label>
-                        <div class="flex gap-3">
-                            <button type="button" id="gender-m" onclick="setGender('m')" class="flex-1 py-3 rounded-2xl border border-zinc-700">Male</button>
-                            <button type="button" id="gender-f" onclick="setGender('f')" class="flex-1 py-3 rounded-2xl border border-cyan-400 bg-cyan-400/10 text-cyan-400">Female</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="text-xs text-zinc-400 mb-1 block">NEGATIVE TAGS</label>
-                    <input type="text" id="negativeTags" placeholder="aggressive, auto-tune..." 
-                           class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                </div>
-
-                <div class="grid grid-cols-3 gap-6">
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span>Style Weight</span><span id="sw-val">0.5</span></div>
-                        <input type="range" id="styleWeight" min="0" max="1" step="0.05" value="0.5" 
-                               oninput="document.getElementById('sw-val').textContent = this.value" class="w-full accent-cyan-400">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span>Weirdness</span><span id="weird-val">0.3</span></div>
-                        <input type="range" id="weirdness" min="0" max="1" step="0.05" value="0.3" 
-                               oninput="document.getElementById('weird-val').textContent = this.value" class="w-full accent-cyan-400">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span>Audio Weight</span><span id="aw-val">0.5</span></div>
-                        <input type="range" id="audioWeight" min="0" max="1" step="0.05" value="0.5" 
-                               oninput="document.getElementById('aw-val').textContent = this.value" class="w-full accent-cyan-400">
-                    </div>
-                </div>
-
-                <div class="flex gap-4 pt-6">
-                    <button type="button" onclick="resetForm()" class="flex-1 py-5 border border-zinc-700 rounded-3xl font-medium">RESET</button>
-                    <button type="submit" class="flex-1 py-5 bg-gradient-to-r from-cyan-400 to-violet-500 text-zinc-950 font-bold rounded-3xl">RUN COVER</button>
-                </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs text-zinc-400 mb-2">TITLE</label>
+                <input type="text" id="title" value="My Song (Reggae Cover)" 
+                       class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
             </div>
-        </form>
-    </div>
-
-    <!-- === RIWAYAT PAGE === -->
-    <div id="page-history" class="p-5 hidden">
-        <p class="text-xs text-zinc-400 mb-6">
-            Hanya menampilkan cover yang dibuat melalui halaman ini (disimpan di browser).<br>
-            Untuk riwayat lengkap & sisa koin, buka dashboard apipass.dev
-        </p>
-        <div id="history-list" class="space-y-4"></div>
-
-        <button onclick="window.open('https://apipass.dev/app/logs','_blank')" 
-                class="mt-10 w-full py-4 border border-zinc-700 rounded-3xl flex items-center justify-center gap-2 text-sm">
-            <i class="fa-solid fa-external-link-alt"></i> Lihat Riwayat Lengkap di Apipass
-        </button>
-    </div>
-
-</div>
-
-<!-- Modal -->
-<div id="modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-5">
-    <div class="bg-zinc-900 rounded-3xl p-6 w-full max-w-md">
-        <div id="progress-area">
-            <p id="modal-text" class="text-cyan-400 text-center mb-8">Mengirim task...</p>
-            <div class="flex justify-center gap-2 my-12">
-                <div class="w-2 h-10 bg-cyan-400 rounded animate-pulse"></div>
-                <div class="w-2 h-10 bg-cyan-400 rounded animate-pulse delay-150"></div>
-                <div class="w-2 h-10 bg-cyan-400 rounded animate-pulse delay-300"></div>
+            <div>
+                <label class="block text-xs text-zinc-400 mb-2">VOCAL GENDER</label>
+                <select id="vocalGender" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
+                    <option value="f">Female</option>
+                    <option value="m">Male</option>
+                </select>
             </div>
         </div>
-        <div id="result-area" class="hidden"></div>
-        <button onclick="closeModal()" class="w-full py-4 border border-zinc-700 rounded-3xl mt-6">Tutup</button>
-    </div>
+
+        <div class="pt-4">
+            <button type="submit" class="w-full py-5 bg-gradient-to-r from-cyan-400 to-violet-500 text-zinc-950 font-bold text-lg rounded-3xl">
+                RUN COVER
+            </button>
+        </div>
+    </form>
+
+    <p class="text-center text-xs text-zinc-500 mt-10">
+        Kalau masih error, coba pakai Model V4.5 di situs resmi untuk bandingkan.
+    </p>
 </div>
 
 <!-- API Key Modal -->
-<div id="api-modal" onclick="if(event.target.id==='api-modal')hideApiModal()" class="hidden fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-5">
-    <div class="bg-zinc-900 rounded-3xl p-8 w-full max-w-md">
-        <h3 class="text-xl font-semibold mb-4">Masukkan API Key</h3>
-        <input id="key-input" type="password" placeholder="apk_1445..." class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-6">
-        <div class="flex gap-4">
-            <button onclick="hideApiModal()" class="flex-1 py-4 border border-zinc-700 rounded-2xl">Batal</button>
-            <button onclick="saveApiKey()" class="flex-1 py-4 bg-cyan-400 text-zinc-950 font-semibold rounded-2xl">Simpan</button>
-        </div>
+<div id="api-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+    <div class="bg-zinc-900 rounded-3xl p-8 w-full max-w-md mx-4">
+        <input id="key-input" type="password" placeholder="apk_1445..." 
+               class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-6 text-lg">
+        <button onclick="saveApiKey()" class="w-full py-4 bg-cyan-400 text-zinc-950 font-semibold rounded-3xl">
+            Simpan API Key
+        </button>
     </div>
 </div>
 
 <script>
-let apiKey = localStorage.getItem('pulsecover_key') || '';
-let currentTaskId = null;
-let pollInterval = null;
-let historyData = JSON.parse(localStorage.getItem('pulsecover_history') || '[]');
+let apiKey = localStorage.getItem('pc_key') || '';
 
-function updateApiUI() {
-    const status = document.getElementById('api-status');
-    const dot = document.getElementById('api-dot');
-    const warn = document.getElementById('key-warning');
-    if (apiKey) {
-        status.textContent = 'Terhubung';
-        status.classList.add('text-emerald-400');
-        dot.classList.replace('bg-red-500', 'bg-emerald-400');
-        warn.classList.add('hidden');
-    } else {
-        warn.classList.remove('hidden');
-    }
+function showApiModal() {
+    document.getElementById('api-modal').classList.remove('hidden');
+    document.getElementById('key-input').value = apiKey;
 }
-
-function showApiModal() { document.getElementById('api-modal').classList.remove('hidden'); }
-function hideApiModal() { document.getElementById('api-modal').classList.add('hidden'); }
 
 function saveApiKey() {
-    const val = document.getElementById('key-input').value.trim();
-    if (val) {
-        apiKey = val;
-        localStorage.setItem('pulsecover_key', apiKey);
-        updateApiUI();
-        hideApiModal();
+    apiKey = document.getElementById('key-input').value.trim();
+    if (apiKey) {
+        localStorage.setItem('pc_key', apiKey);
+        document.getElementById('api-status').innerHTML = '✓ Terhubung';
     }
-}
-
-function setGender(g) {
-    document.getElementById('gender-m').classList.toggle('border-cyan-400', g === 'm');
-    document.getElementById('gender-f').classList.toggle('border-cyan-400', g === 'f');
-}
-
-function resetForm() {
-    document.getElementById('cover-form').reset();
-    document.getElementById('styleWeight').value = 0.5;
-    document.getElementById('weirdness').value = 0.3;
-    document.getElementById('audioWeight').value = 0.5;
-    document.getElementById('sw-val').textContent = '0.5';
-    document.getElementById('weird-val').textContent = '0.3';
-    document.getElementById('aw-val').textContent = '0.5';
-    setGender('f');
+    document.getElementById('api-modal').classList.add('hidden');
 }
 
 async function createTask(e) {
     e.preventDefault();
-    if (!apiKey) return alert('Masukkan API Key terlebih dahulu!');
+    if (!apiKey) return alert('Masukkan API Key dulu dari apipass.dev');
 
     const payload = {
         model: "suno/cover",
         input: {
-            model_version: document.getElementById('model_version').value,
+            model_version: "V4_5",                    // pakai V4.5 dulu (lebih stabil)
             audioUrl: document.getElementById('audioUrl').value.trim(),
-            customMode: document.getElementById('customMode').checked,
-            instrumental: document.getElementById('instrumental').checked,
             prompt: document.getElementById('prompt').value.trim(),
-            style: document.getElementById('style').value.trim(),
             title: document.getElementById('title').value.trim(),
-            continueAt: parseInt(document.getElementById('continueAt').value) || 0,
-            vocalGender: document.getElementById('gender-f').classList.contains('border-cyan-400') ? 'f' : 'm',
-            negativeTags: document.getElementById('negativeTags').value.trim(),
-            styleWeight: parseFloat(document.getElementById('styleWeight').value),
-            weirdness: parseFloat(document.getElementById('weirdness').value),
-            audioWeight: parseFloat(document.getElementById('audioWeight').value)
+            vocalGender: document.getElementById('vocalGender').value,
+            customMode: false,
+            instrumental: false
         }
     };
-
-    document.getElementById('modal').classList.remove('hidden');
-    document.getElementById('result-area').classList.add('hidden');
-    document.getElementById('modal-text').textContent = 'Mengirim task...';
 
     try {
         const res = await fetch('https://api.apipass.dev/api/v1/jobs/createTask', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
             body: JSON.stringify(payload)
         });
 
         const data = await res.json();
-        if (data.code !== 200) throw new Error(data.message || 'Gagal membuat task');
+        console.log("Full Response dari apipass:", data);   // buka console untuk lihat detail
 
-        currentTaskId = data.data.taskId;
-
-        historyData.unshift({
-            taskId: currentTaskId,
-            title: payload.input.title || 'Untitled Cover',
-            date: new Date().toISOString()
-        });
-        localStorage.setItem('pulsecover_history', JSON.stringify(historyData));
-
-        document.getElementById('modal-text').textContent = `Task ID: ${currentTaskId}\nSedang diproses...`;
-        startPolling();
-
-    } catch (err) {
-        document.getElementById('modal-text').innerHTML = `Error: ${err.message}<br><br>Coba lagi nanti (Service apipass kadang down)`;
-    }
-}
-
-function startPolling() {
-    if (pollInterval) clearInterval(pollInterval);
-    let attempts = 0;
-
-    pollInterval = setInterval(async () => {
-        attempts++;
-        if (attempts > 40) {
-            clearInterval(pollInterval);
-            document.getElementById('modal-text').textContent = 'Waktu habis. Cek dashboard apipass';
-            return;
+        if (data.code === 200) {
+            alert(`✅ Berhasil!\nTask ID: ${data.data.taskId}\n\nCek hasil di https://apipass.dev/app/logs`);
+        } else {
+            alert(`Error dari server:\n${data.message || JSON.stringify(data)}`);
         }
-
-        try {
-            const res = await fetch(`https://api.apipass.dev/api/v1/jobs/recordInfo?taskId=${currentTaskId}`, {
-                headers: { 'Authorization': `Bearer ${apiKey}` }
-            });
-            const data = await res.json();
-
-            if (data.data.state === 'success') {
-                clearInterval(pollInterval);
-                showResult(data.data.resultJson);
-            } else if (data.data.state === 'fail') {
-                clearInterval(pollInterval);
-                document.getElementById('modal-text').textContent = `Gagal: ${data.data.failMsg || 'Unknown'}`;
-            }
-        } catch(e) {}
-    }, 3500);
-}
-
-function showResult(resultJson) {
-    const container = document.getElementById('result-area');
-    container.innerHTML = '<p class="text-emerald-400 font-medium mb-4">Cover berhasil!</p>';
-    
-    (resultJson.data || []).forEach(item => {
-        const div = document.createElement('div');
-        div.className = "border border-zinc-700 rounded-2xl p-4 mb-6";
-        div.innerHTML = `
-            <img src="${item.image_url}" class="w-full rounded-xl mb-4">
-            <audio controls class="w-full"><source src="${item.audio_url}" type="audio/mpeg"></audio>
-        `;
-        container.appendChild(div);
-    });
-
-    document.getElementById('progress-area').classList.add('hidden');
-    container.classList.remove('hidden');
-}
-
-function closeModal() {
-    document.getElementById('modal').classList.add('hidden');
-    document.getElementById('progress-area').classList.remove('hidden');
-    document.getElementById('result-area').classList.add('hidden');
-    if (pollInterval) clearInterval(pollInterval);
-}
-
-function switchTab(n) {
-    document.getElementById('page-playground').classList.toggle('hidden', n !== 0);
-    document.getElementById('page-history').classList.toggle('hidden', n !== 1);
-
-    document.getElementById('tab-playground').classList.toggle('border-cyan-400', n === 0);
-    document.getElementById('tab-playground').classList.toggle('text-cyan-400', n === 0);
-    document.getElementById('tab-history').classList.toggle('border-cyan-400', n === 1);
-    document.getElementById('tab-history').classList.toggle('text-cyan-400', n === 1);
-
-    if (n === 1) renderHistory();
-}
-
-function renderHistory() {
-    const container = document.getElementById('history-list');
-    container.innerHTML = '';
-
-    if (historyData.length === 0) {
-        container.innerHTML = `<p class="text-zinc-400 text-center py-12">Belum ada cover yang dibuat</p>`;
-        return;
+    } catch (err) {
+        alert("Gagal koneksi ke server:\n" + err.message);
     }
-
-    historyData.forEach(item => {
-        const div = document.createElement('div');
-        div.className = "bg-zinc-900 border border-zinc-700 rounded-2xl p-5";
-        div.innerHTML = `
-            <div class="font-medium">${item.title}</div>
-            <div class="text-xs text-zinc-500 mt-1">${item.taskId}</div>
-            <div class="text-xs text-zinc-600">${new Date(item.date).toLocaleString('id-ID')}</div>
-        `;
-        container.appendChild(div);
-    });
 }
 
 window.onload = () => {
-    updateApiUI();
-    setGender('f');
-    renderHistory();
-    console.log('%cPulseCover v3 - Tab Riwayat sudah diperbaiki', 'color:#67e8f9');
+    if (apiKey) document.getElementById('api-status').innerHTML = '✓ Terhubung';
 };
 </script>
 </body>
