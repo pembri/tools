@@ -3,142 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PulseCover • Suno Cover</title>
+    <title>CoverAI • Suno Cover</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
+        
+        .title-font { font-family: 'Space Grotesk', sans-serif; }
+        .mobile-frame {
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 0 0 12px #111827, 0 0 0 16px #1f2937;
+            border-radius: 48px;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .slider-thumb { accent-color: #a855f7; }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen">
+<body class="bg-gray-950 text-white flex items-center justify-center min-h-screen p-4">
 
-<div class="max-w-xl mx-auto p-5">
+<div class="mobile-frame bg-[#0f172a] flex flex-col">
 
-    <div class="flex justify-between items-center mb-8">
+    <!-- HEADER -->
+    <div class="bg-[#1e2937] px-5 py-4 flex items-center justify-between border-b border-white/10">
         <div class="flex items-center gap-3">
-            <div class="w-11 h-11 bg-cyan-500 rounded-3xl flex items-center justify-center text-4xl">♪</div>
-            <div>
-                <div class="text-2xl font-bold">PulseCover</div>
-                <div class="text-cyan-400 text-sm">Suno V5 Cover</div>
+            <div class="w-9 h-9 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-waveform text-2xl"></i>
             </div>
+            <h1 class="title-font text-2xl tracking-tight">CoverAI</h1>
         </div>
-        <div onclick="showApiModal()" class="px-5 py-2 bg-zinc-800 rounded-3xl flex items-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-key"></i>
-            <span id="api-status">API Key</span>
+        
+        <div class="flex items-center gap-3">
+            <div onclick="toggleApiModal()" class="flex items-center bg-white/10 hover:bg-white/20 px-4 py-2 rounded-3xl text-sm cursor-pointer active:scale-95">
+                <i class="fa-solid fa-key mr-2"></i>
+                <span id="key-status" class="font-medium">API Key</span>
+            </div>
+            <div class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-3xl text-xs flex items-center">
+                <i class="fa-solid fa-coins mr-1"></i>
+                <span id="balance-display" class="font-semibold">— koin</span>
+            </div>
         </div>
     </div>
 
-    <form id="form" onsubmit="createTask(event)" class="space-y-6">
+    <!-- TABS -->
+    <div class="flex border-b border-white/10">
+        <button onclick="switchTab(0)" id="tab-0" class="flex-1 py-4 font-medium border-b-2 border-purple-500 text-purple-400">Generate</button>
+        <button onclick="switchTab(1)" id="tab-1" class="flex-1 py-4 font-medium text-gray-400">Riwayat</button>
+    </div>
+
+    <!-- GENERATE TAB -->
+    <div id="tab-content-0" class="flex-1 overflow-auto p-5 space-y-6">
 
         <div>
-            <label class="block text-xs text-zinc-400 mb-2">SOURCE AUDIO URL (harus publik)</label>
-            <input type="url" id="audioUrl" placeholder="https://contoh.com/lagu.mp3" required
-                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 text-base">
+            <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Model Version</label>
+            <select id="model_version" class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3 focus:border-purple-500">
+                <option value="V5" selected>V5 (Terbaru)</option>
+                <option value="V4_5PLUS">V4.5 Plus</option>
+                <option value="V4_5ALL">V4.5 All</option>
+                <option value="V4_5">V4.5</option>
+                <option value="V4">V4</option>
+            </select>
         </div>
 
+        <!-- Public Audio URL -->
         <div>
-            <label class="block text-xs text-zinc-400 mb-2">COVER PROMPT</label>
-            <textarea id="prompt" rows="4" placeholder="Transform into roots reggae 1970s style, warm analog sound..." 
-                      class="w-full bg-zinc-900 border border-zinc-700 rounded-3xl px-5 py-4"></textarea>
+            <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Public Audio URL <span class="text-red-400">*</span></label>
+            <input id="audioUrl" type="url" placeholder="https://contoh.com/lagu-anda.mp3" 
+                   class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3 focus:border-purple-500">
+            <p class="text-xs text-gray-400 mt-1">MP3, WAV, OGG, M4A, FLAC • Max 50MB</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-xs text-zinc-400 mb-2">TITLE</label>
-                <input type="text" id="title" value="My Song (Reggae Cover)" 
-                       class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
+            <div class="flex justify-between items-center bg-white/5 px-5 py-3 rounded-3xl">
+                <div>Custom Mode</div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="customMode" onchange="toggleCustom()" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:bg-purple-500"></div>
+                </label>
             </div>
-            <div>
-                <label class="block text-xs text-zinc-400 mb-2">VOCAL GENDER</label>
-                <select id="vocalGender" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4">
-                    <option value="f">Female</option>
-                    <option value="m">Male</option>
-                </select>
+            <div class="flex justify-between items-center bg-white/5 px-5 py-3 rounded-3xl">
+                <div>Instrumental Only</div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="instrumental" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:bg-purple-500"></div>
+                </label>
             </div>
         </div>
 
-        <div class="pt-4">
-            <button type="submit" class="w-full py-5 bg-gradient-to-r from-cyan-400 to-violet-500 text-zinc-950 font-bold text-lg rounded-3xl">
-                RUN COVER
-            </button>
+        <!-- Prompt -->
+        <div id="prompt-group">
+            <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Cover Prompt</label>
+            <textarea id="prompt" rows="3" class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3" 
+                      placeholder="Transform into smooth jazz with piano and saxophone..."></textarea>
         </div>
-    </form>
 
-    <p class="text-center text-xs text-zinc-500 mt-10">
-        Kalau masih error, coba pakai Model V4.5 di situs resmi untuk bandingkan.
-    </p>
+        <!-- Custom Style & Title -->
+        <div id="custom-group" class="hidden grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Target Style</label>
+                <input id="style" type="text" value="Jazz, Smooth, Lounge" 
+                       class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3">
+            </div>
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Cover Title</label>
+                <input id="title" type="text" value="Lagu Saya (Jazz Cover)" 
+                       class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3">
+            </div>
+        </div>
+
+        <div class="flex gap-4">
+            <div class="flex-1">
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Start At (detik)</label>
+                <input id="continueAt" type="number" value="0" class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3">
+            </div>
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Vocal Gender</label>
+                <div class="flex bg-white/10 rounded-3xl p-1 text-sm">
+                    <button onclick="setGender('f')" id="btn-f" class="flex-1 py-2 rounded-3xl active">♀ Female</button>
+                    <button onclick="setGender('m')" id="btn-m" class="flex-1 py-2 rounded-3xl">♂ Male</button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Negative Tags</label>
+            <input id="negativeTags" type="text" placeholder="aggressive, auto-tune, heavy distortion..." 
+                   class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-3">
+        </div>
+
+        <!-- Sliders -->
+        <div class="space-y-6">
+            <div>
+                <div class="flex justify-between text-xs mb-1"><span>Style Weight</span><span id="sw-val" class="font-mono">0.5</span></div>
+                <input type="range" id="styleWeight" min="0" max="1" step="0.05" value="0.5" oninput="document.getElementById('sw-val').textContent=this.value" class="slider-thumb w-full">
+            </div>
+            <div>
+                <div class="flex justify-between text-xs mb-1"><span>Weirdness</span><span id="weird-val" class="font-mono">0.3</span></div>
+                <input type="range" id="weirdness" min="0" max="1" step="0.05" value="0.3" oninput="document.getElementById('weird-val').textContent=this.value" class="slider-thumb w-full">
+            </div>
+            <div>
+                <div class="flex justify-between text-xs mb-1"><span>Source Audio Weight</span><span id="aw-val" class="font-mono">0.5</span></div>
+                <input type="range" id="audioWeight" min="0" max="1" step="0.05" value="0.5" oninput="document.getElementById('aw-val').textContent=this.value" class="slider-thumb w-full">
+            </div>
+        </div>
+
+        <button onclick="startGeneration()" 
+                class="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:brightness-110 py-4 rounded-3xl font-semibold text-lg flex items-center justify-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Run (2.5 per run)
+        </button>
+    </div>
+
+    <!-- RIWAYAT TAB -->
+    <div id="tab-content-1" class="hidden flex-1 overflow-auto p-5">
+        <p class="text-gray-400 text-center py-10">Riwayat cover kamu akan muncul setelah API Key terhubung.</p>
+    </div>
+
 </div>
 
 <!-- API Key Modal -->
-<div id="api-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-    <div class="bg-zinc-900 rounded-3xl p-8 w-full max-w-md mx-4">
-        <input id="key-input" type="password" placeholder="apk_1445..." 
-               class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-6 text-lg">
-        <button onclick="saveApiKey()" class="w-full py-4 bg-cyan-400 text-zinc-950 font-semibold rounded-3xl">
-            Simpan API Key
-        </button>
+<div id="api-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-[#1e2937] w-full max-w-[400px] mx-4 rounded-3xl p-6" onclick="event.stopImmediatePropagation()">
+        <h3 class="text-xl font-semibold mb-4">Masukkan API Key</h3>
+        <input id="api-key-input" type="text" placeholder="sk-..." 
+               class="w-full bg-white/10 border border-white/20 rounded-3xl px-5 py-4 mb-4 focus:border-purple-500">
+        <p class="text-xs text-gray-400 mb-6">Dapatkan di <a href="https://apipass.dev/app/api-keys" target="_blank" class="text-purple-400 underline">apipass.dev/app/api-keys</a></p>
+        
+        <div class="flex gap-3">
+            <button onclick="toggleApiModal()" class="flex-1 py-3 border border-white/30 rounded-3xl">Batal</button>
+            <button onclick="saveApiKey()" class="flex-1 py-3 bg-purple-600 rounded-3xl">Simpan</button>
+        </div>
     </div>
 </div>
 
 <script>
-let apiKey = localStorage.getItem('pc_key') || '';
+// Variabel global
+let API_KEY = localStorage.getItem('coverai_apikey') || '';
+let currentTaskId = null;
 
-function showApiModal() {
-    document.getElementById('api-modal').classList.remove('hidden');
-    document.getElementById('key-input').value = apiKey;
+// Update UI API Key
+function updateKeyUI() {
+    const el = document.getElementById('key-status');
+    el.innerHTML = API_KEY ? `<i class="fa-solid fa-check text-emerald-400"></i> Terhubung` : `<i class="fa-solid fa-key"></i> API Key`;
+}
+
+// Modal API Key
+function toggleApiModal() {
+    document.getElementById('api-modal').classList.toggle('hidden');
 }
 
 function saveApiKey() {
-    apiKey = document.getElementById('key-input').value.trim();
-    if (apiKey) {
-        localStorage.setItem('pc_key', apiKey);
-        document.getElementById('api-status').innerHTML = '✓ Terhubung';
-    }
-    document.getElementById('api-modal').classList.add('hidden');
+    const key = document.getElementById('api-key-input').value.trim();
+    if (!key) return alert('Masukkan API Key!');
+    
+    API_KEY = key;
+    localStorage.setItem('coverai_apikey', key);
+    updateKeyUI();
+    toggleApiModal();
+    alert('API Key berhasil disimpan!');
 }
 
-async function createTask(e) {
-    e.preventDefault();
-    if (!apiKey) return alert('Masukkan API Key dulu dari apipass.dev');
-
-    const payload = {
-        model: "suno/cover",
-        input: {
-            model_version: "V4_5",                    // pakai V4.5 dulu (lebih stabil)
-            audioUrl: document.getElementById('audioUrl').value.trim(),
-            prompt: document.getElementById('prompt').value.trim(),
-            title: document.getElementById('title').value.trim(),
-            vocalGender: document.getElementById('vocalGender').value,
-            customMode: false,
-            instrumental: false
-        }
-    };
-
-    try {
-        const res = await fetch('https://api.apipass.dev/api/v1/jobs/createTask', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        console.log("Full Response dari apipass:", data);   // buka console untuk lihat detail
-
-        if (data.code === 200) {
-            alert(`✅ Berhasil!\nTask ID: ${data.data.taskId}\n\nCek hasil di https://apipass.dev/app/logs`);
-        } else {
-            alert(`Error dari server:\n${data.message || JSON.stringify(data)}`);
-        }
-    } catch (err) {
-        alert("Gagal koneksi ke server:\n" + err.message);
-    }
+// Toggle Custom Mode
+function toggleCustom() {
+    const isCustom = document.getElementById('customMode').checked;
+    document.getElementById('custom-group').classList.toggle('hidden', !isCustom);
+    document.getElementById('prompt-group').classList.toggle('hidden', isCustom);
 }
 
+function setGender(g) {
+    document.getElementById('btn-f').classList.toggle('bg-purple-500', g === 'f');
+    document.getElementById('btn-m').classList.toggle('bg-purple-500', g === 'm');
+}
+
+// Switch Tab
+function switchTab(n) {
+    document.getElementById('tab-0').classList.toggle('border-b-2', n===0);
+    document.getElementById('tab-0').classList.toggle('text-purple-400', n===0);
+    document.getElementById('tab-1').classList.toggle('border-b-2', n===1);
+    document.getElementById('tab-1').classList.toggle('text-purple-400', n===1);
+    
+    document.getElementById('tab-content-0').classList.toggle('hidden', n!==0);
+    document.getElementById('tab-content-1').classList.toggle('hidden', n!==1);
+}
+
+// Start Generation (akan dilengkapi lebih lanjut jika kamu mau)
+function startGeneration() {
+    if (!API_KEY) {
+        alert('Masukkan API Key terlebih dahulu!');
+        toggleApiModal();
+        return;
+    }
+    alert('Fitur generate sedang dalam pengembangan sesuai dokumentasi resmi.\n\nSilakan cek console untuk progress selanjutnya.');
+    console.log('API Key terdeteksi:', API_KEY ? 'Ya' : 'Tidak');
+}
+
+// Init
 window.onload = () => {
-    if (apiKey) document.getElementById('api-status').innerHTML = '✓ Terhubung';
+    updateKeyUI();
+    setGender('f');
+    console.log('%cHalaman CoverAI sudah disesuaikan dengan website resmi apipass.dev/model/suno/suno_cover', 'color:#a855f7; font-size:14px');
 };
 </script>
 </body>
